@@ -1,5 +1,9 @@
 # Release history
 
+## Unreleased
+
+- End each piece of work with a short, anonymised “notes on the skill” block for the user: unclear or conflicting guidance, working sources and techniques missing from the references, and rules that would have prevented errors; issues or PRs only with the user’s consent.
+
 ## 1.6.0 — 2026-10-26
 
 - Coordinate parallel register changes and archive processing with existing tools, preserving current edits and distinguishing preparation, import and verification ([#31](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/31)).
