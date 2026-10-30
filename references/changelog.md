@@ -1,5 +1,15 @@
 # Release history
 
+## 1.27.0 — 2026-10-30
+
+- Add municipal and regional burial-register routes with attributed access observations, conservative source labels and explicit coverage limits. Preserve civil dates rather than automatically shifting UTC values; distinguish observed connection failures from geographic restrictions ([#89](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/89)).
+- Read OCR hits in their record and table context, including a household continuation when relevant. Distinguish missing search hits from unverified archive coverage and qualify search-operator observations ([#90](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/90)).
+- Add officer-card photograph and military-registration leads without treating an unspecified registration exit as death or an upper life bound. Preserve relatives' identification testimony and assess its dependence through the existing evidence protocol ([#91](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/91)).
+- Consolidate surname-form variants, abolished-district checks, access-failure history and worker scratch-file isolation into their canonical guides, without a separate per-resource log or guaranteed cache safety ([#92](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/92)).
+- Add the Omsk library's Akmola reference books as a historical-geography route, with verified sample pagination and a synthetic reasoning scenario; keep OCR and administrative lists distinct from identity, residence and kinship evidence ([#93](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/93)).
+- Add NLR memorial-book discovery and KazNEB settlement-plot publications with object-level provenance and access limits; distinguish plot tables from immigrant-family lists and hosted copies from independent evidence ([#94](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/94)).
+- Preserve search history after corrected research inputs, choose targeted rechecks and reassess affected identifications without resetting unrelated research. Add a fictional reasoning scenario ([#95](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/95)).
+
 ## 1.26.0 — 2026-10-29
 
 - Add two qualified holdings-discovery catalogs for the 1897 census and distinguish them from published statistics and personal records. Separate Soviet census guidance, verify catalog leads against archival inventories, and retain uncertainty when an inventory is unavailable or a locality is absent from a catalog. Add an attributed RGIA inventory 11 route for settlement and population summaries without assuming that names are present ([#87](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/87)).
