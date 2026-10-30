@@ -1,9 +1,5 @@
 # Release history
 
-## Unreleased
-
-- Add qualified NLR memorial-book and KazNEB digital-library routes, with checked Akmola examples, stable object locators and limits on coverage, access and source independence.
-
 ## 1.26.0 — 2026-10-29
 
 - Add two qualified holdings-discovery catalogs for the 1897 census and distinguish them from published statistics and personal records. Separate Soviet census guidance, verify catalog leads against archival inventories, and retain uncertainty when an inventory is unavailable or a locality is absent from a catalog. Add an attributed RGIA inventory 11 route for settlement and population summaries without assuming that names are present ([#87](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/87)).
