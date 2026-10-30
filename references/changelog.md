@@ -1,9 +1,5 @@
 # Release history
 
-## Unreleased
-
-- Add the Omsk Regional Scientific Library's Akmola reference-book route, with the checked 1915 PDF, historical-geography guidance and a synthetic case distinguishing OCR/place leads from identity and kinship evidence ([#93](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/93)).
-
 ## 1.26.0 — 2026-10-29
 
 - Add two qualified holdings-discovery catalogs for the 1897 census and distinguish them from published statistics and personal records. Separate Soviet census guidance, verify catalog leads against archival inventories, and retain uncertainty when an inventory is unavailable or a locality is absent from a catalog. Add an attributed RGIA inventory 11 route for settlement and population summaries without assuming that names are present ([#87](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/87)).
