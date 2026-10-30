@@ -1,9 +1,5 @@
 # Release history
 
-## Unreleased
-
-- Clarify targeted rechecks after corrected names, roles, dates or places: preserve original search history, link replacement searches and reassess affected identity conclusions without discarding independent work. Add a synthetic reasoning case.
-
 ## 1.26.0 — 2026-10-29
 
 - Add two qualified holdings-discovery catalogs for the 1897 census and distinguish them from published statistics and personal records. Separate Soviet census guidance, verify catalog leads against archival inventories, and retain uncertainty when an inventory is unavailable or a locality is absent from a catalog. Add an attributed RGIA inventory 11 route for settlement and population summaries without assuming that names are present ([#87](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/87)).
