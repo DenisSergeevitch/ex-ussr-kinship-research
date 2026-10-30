@@ -1,5 +1,5 @@
 skill: ex-ussr-kinship-research
-version: "1.26.0"
+version: "1.27.0"
 
 should_trigger:
   - "Помоги доказать, что Иван Петров из метрической записи 1897 года — мой прадед."
