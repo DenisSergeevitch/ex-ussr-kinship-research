@@ -2,7 +2,7 @@
 
 ![Муқоваи ex-USSR Kinship Research](docs/cover.jpg)
 
-Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md)
+Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md) / [日本語](README.ja.md)
 
 **Малакаи насабшиносӣ барои агентҳои зеҳни сунъӣ бо авлавияти далелҳо (Codex, Claude Code ва дигар муҳитҳои Agent Skills).** Он агентро ба муҳаққиқи бодиққати таърихи оила дар ҳудуди собиқ ИҶШС, Иттиҳоди Шӯравӣ ва Империяи Русия табдил медиҳад. Агент китобҳои калисо ва сабтҳои ҳолати шаҳрвандӣ, парвандаҳои ҳарбӣ, бадарға ва саркӯб, инчунин сканҳои бойгонии бе индексро мехонад. Пайдоиши ҳар бозёфтро пайгиришаванда нигоҳ медорад, сабтро аз тафсири он ҷудо мекунад ва равшан мегӯяд, ки чӣ исбот шудаасту чӣ нашудааст.
 

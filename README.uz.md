@@ -2,7 +2,7 @@
 
 ![ex-USSR Kinship Research muqovasi](docs/cover.jpg)
 
-Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md)
+Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md) / [日本語](README.ja.md)
 
 **Sun’iy intellekt agentlari uchun dalilga ustuvorlik beruvchi genealogiya ko‘nikmasi (Codex, Claude Code va boshqa Agent Skills muhitlari).** U agentni sobiq SSSR, Sovet Ittifoqi va Rossiya imperiyasi hududidagi oila tarixini sinchiklab o‘rganuvchi tadqiqotchiga aylantiradi. Agent cherkov kitoblari va fuqarolik holati qaydlarini, harbiy, surgun va qatag‘on hujjatlarini, shuningdek indekslanmagan arxiv skanlarini o‘qiydi. Har bir topilmaning manbasini kuzatish imkonini saqlaydi, qaydni uning talqinidan ajratadi va nima isbotlanganini, nima isbotlanmaganini aniq aytadi.
 
