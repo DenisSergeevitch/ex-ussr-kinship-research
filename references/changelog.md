@@ -1,5 +1,15 @@
 # Release history
 
+## 1.28.0 — 2026-10-31
+
+- Add qualified Irkutsk, GIS UIAD and regional archive routes with dated access observations, current-term checks and historical RGADA copy guidance. ([#98](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/98), [#99](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/99), [#100](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/100)).
+- Expand Moscow civil-registration, metric-book and digital-library navigation; preserve surname-free records and bounded search observations without a manual-only workflow. ([#101](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/101), [#102](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/102)).
+- Refine Moscow burial, Ukrainian archival and Holodomor memory-book source guidance; preserve image provenance and use existing local tools for large PDFs. ([#103](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/103), [#104](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/104)).
+- Clarify multi-file FamilySearch groups, relevant place variants, full-document OBD access and redacted military fields; add period-specific Julian/Gregorian offsets. ([#105](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/105), [#106](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/106), [#107](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/107)).
+- Qualify Yandex, probate, Open List and RGIA census leads, including the actual partial centenarian index and restricted fields. ([#108](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/108)).
+- Add central, north-western, Volga, Ural, Siberian and southern regional archive routes, regional repression and resettler indexes, and local civil-register transfer examples; retain the Kuban Cossack-only scope. ([#109](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/109), [#110](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/110), [#111](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/111), [#112](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/112), [#113](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/113), [#114](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/114)).
+- Add three published Vilnius Commission inventory volumes with copy-level provenance and a proportional OCR method for indexes, page mapping, errata and document context. ([#117](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/117)).
+
 ## 1.27.0 — 2026-10-30
 
 - Add municipal and regional burial-register routes with attributed access observations, conservative source labels and explicit coverage limits. Preserve civil dates rather than automatically shifting UTC values; distinguish observed connection failures from geographic restrictions ([#89](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/89)).
