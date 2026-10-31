@@ -1,5 +1,10 @@
 # Release history
 
+## 1.30.0 — 2026-10-31
+
+- Add a manually contributed Japanese README and its link from the canonical English README, preserving the existing language snapshots ([#122](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/122)).
+- Preserve displayed PDF image geometry when preparing OCR, distinguish source-page coverage from overlapping crops and replacement OCR outputs, and revisit negative findings affected by preparation errors. Add two synthetic reasoning scenarios ([#123](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/123)).
+
 ## 1.29.0 — 2026-10-31
 
 - Reconcile conflicting family-tree exports and research summaries at the claim level, preserving provenance and prior decisions through repeated imports. Distinguish catalog descriptions, available scans and the portions actually read when comparing archival coverage; add focused reasoning scenarios and extend the existing shelfmark-correction case ([#120](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/120)).
