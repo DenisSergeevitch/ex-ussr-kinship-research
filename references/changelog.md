@@ -1,5 +1,9 @@
 # Release history
 
+## 1.29.0 — 2026-10-31
+
+- Reconcile conflicting family-tree exports and research summaries at the claim level, preserving provenance and prior decisions through repeated imports. Distinguish catalog descriptions, available scans and the portions actually read when comparing archival coverage; add focused reasoning scenarios and extend the existing shelfmark-correction case ([#120](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/120)).
+
 ## 1.28.0 — 2026-10-31
 
 - Add qualified Irkutsk, GIS UIAD and regional archive routes with dated access observations, current-term checks and historical RGADA copy guidance. ([#98](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/98), [#99](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/99), [#100](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/100)).
