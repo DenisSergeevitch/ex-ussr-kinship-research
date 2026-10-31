@@ -2,7 +2,7 @@
 
 ![ex-USSR Kinship Research üz qabığı](docs/cover.jpg)
 
-Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md)
+Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md) / [日本語](README.ja.md)
 
 **Süni intellekt agentləri (Codex, Claude Code və digər Agent Skills mühitləri) üçün sübutları önə çəkən şəcərə araşdırması bacarığı.** O, agenti keçmiş SSRİ, Sovet İttifaqı və Rusiya imperiyası ərazilərində ailə tarixinin diqqətli tədqiqatçısına çevirir. Agent kilsə kitablarını və vətəndaşlıq vəziyyəti aktlarını, hərbi, deportasiya və repressiya işlərini, həmçinin indeksləşdirilməmiş arxiv skanlarını oxuyur. Hər tapıntının mənşəyini izlənə bilən şəkildə saxlayır, qeydləri onların şərhindən ayırır və nəyin sübut edildiyini, nəyin edilmədiyini aydın bildirir.
 
