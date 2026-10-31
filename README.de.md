@@ -2,7 +2,7 @@
 
 ![Titelbild von ex-USSR Kinship Research](docs/cover.jpg)
 
-Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md) / [日本語](README.ja.md)
+Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md)
 
 **Eine genealogische Fähigkeit für KI-Agenten (Codex, Claude Code und andere Agent-Skills-Laufzeitumgebungen), bei der Belege an erster Stelle stehen.** Sie macht einen Agenten zum sorgfältigen Erforscher der Familiengeschichte in der ehemaligen UdSSR, der Sowjetunion und dem Russischen Reich. Der Agent liest Kirchenbücher und Personenstandsregister, Militär-, Deportations- und Repressionsakten sowie nicht indexierte Archivscans. Er hält die Herkunft jedes Fundes nachvollziehbar fest, trennt Aufzeichnungen von ihrer Deutung und sagt klar, was bewiesen ist und was nicht.
 

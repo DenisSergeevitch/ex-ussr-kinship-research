@@ -2,7 +2,7 @@
 
 ![ex-USSR Kinship Research мукабасы](docs/cover.jpg)
 
-Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md) / [日本語](README.ja.md)
+Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md)
 
 **ЖИ агенттери үчүн далилдерге таянган генеалогиялык көндүм (Codex, Claude Code жана башка Agent Skills чөйрөлөрү).** Ал агентти мурдагы СССРдин, Советтер Союзунун жана Россия империясынын аймагындагы үй-бүлө тарыхын кылдат изилдөөчүгө айландырат. Агент чиркөө китептерин жана жарандык абал актыларын, аскердик, сүргүн жана репрессия документтерин, ошондой эле индекстелбеген архивдик скандарды окуйт. Ар бир табылган маалыматтын булагын текшерүүгө мүмкүнчүлүк берет, жазууну анын чечмеленишинен ажыратат жана эмне далилденгенин, эмне далилденбегенин ачык айтат.
 

@@ -2,7 +2,7 @@
 
 ![Coperta ex-USSR Kinship Research](docs/cover.jpg)
 
-Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md) / [日本語](README.ja.md)
+Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md)
 
 **Un skill de genealogie bazat pe dovezi pentru agenți AI (Codex, Claude Code și alte medii Agent Skills).** Transformă agentul într-un cercetător atent al istoriei familiei din fostul spațiu sovietic, Uniunea Sovietică și Imperiul Rus. Agentul citește registre parohiale și de stare civilă, dosare militare, de deportare și represiune, precum și scanări de arhivă neindexate. Păstrează proveniența fiecărei descoperiri, separă documentele de interpretare și spune clar ce este demonstrat și ce nu.
 

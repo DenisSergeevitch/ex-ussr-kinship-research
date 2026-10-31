@@ -2,7 +2,7 @@
 
 ![ex-USSR Kinship Research viršelis](docs/cover.jpg)
 
-Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md) / [日本語](README.ja.md)
+Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md)
 
 **Įrodymais grindžiamas genealogijos įgūdis DI agentams (Codex, Claude Code ir kitoms Agent Skills vykdymo aplinkoms).** Jis paverčia agentą kruopščiu šeimos istorijos tyrėju buvusios SSRS, Sovietų Sąjungos ir Rusijos imperijos teritorijoje. Agentas skaito bažnytines ir civilinės būklės knygas, karines, tremties ir represijų bylas bei neindeksuotus archyvų skenavimus. Kiekvieno radinio kilmę galima atsekti; dokumentai atskiriami nuo interpretacijos ir aiškiai nurodoma, kas įrodyta, o kas ne.
 

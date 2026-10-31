@@ -2,7 +2,7 @@
 
 ![ex-USSR Kinship Research vāka attēls](docs/cover.jpg)
 
-Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md) / [日本語](README.ja.md)
+Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md)
 
 **Pierādījumos balstīta ģenealoģijas prasme AI aģentiem (Codex, Claude Code un citām Agent Skills izpildvidēm).** Tā padara aģentu par rūpīgu dzimtas vēstures pētnieku bijušās PSRS, Padomju Savienības un Krievijas impērijas teritorijā. Aģents lasa baznīcu grāmatas un civilstāvokļa reģistrus, militārās, deportāciju un represiju lietas, kā arī neindeksētus arhīvu skenējumus. Katra atraduma izcelsme ir izsekojama; dokumenti ir nošķirti no interpretācijas, un skaidri norādīts, kas ir pierādīts un kas nav.
 

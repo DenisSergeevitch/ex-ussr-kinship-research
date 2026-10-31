@@ -2,7 +2,7 @@
 
 ![ex-USSR Kinship Research sahypasynyň baş suraty](docs/cover.jpg)
 
-Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md) / [日本語](README.ja.md)
+Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md)
 
 **Emeli aň agentleri üçin subutnamany ileri tutýan nesilşynaslyk başarnygy (Codex, Claude Code we beýleki Agent Skills gurşawlary).** Ol agenti öňki SSSR, Sowet Soýuzy we Russiýa imperiýasy boýunça maşgala taryhyny ünsli öwrenýän gözlegçä öwürýär. Agent buthana kitaplaryny we raýat ýagdaýynyň ýazgylaryny, harby, sürgün we repressiýa resminamalaryny, şeýle hem indekslenmedik arhiw skanlaryny okaýar. Her tapyndynyň gelip çykyşyny yzarlap bolýan görnüşde saklaýar, ýazgyny onuň düşündirişinden aýyrýar we nämäniň subut edilendigini, nämäniň edilmändigini açyk aýdýar.
 

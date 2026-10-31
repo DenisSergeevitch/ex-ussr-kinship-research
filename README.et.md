@@ -2,7 +2,7 @@
 
 ![ex-USSR Kinship Researchi kaanepilt](docs/cover.jpg)
 
-Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md) / [日本語](README.ja.md)
+Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md)
 
 **Tõenduspõhine genealoogiaoskus tehisintellektiagentidele (Codex, Claude Code ja muud Agent Skillsi käituskeskkonnad).** See muudab agendi hoolikaks perekonnaloo uurijaks endise NSV Liidu, Nõukogude Liidu ja Vene impeeriumi alal. Agent loeb kiriku- ja perekonnaseisuregistreid, sõjaväe-, küüditamis- ja repressioonitoimikuid ning indekseerimata arhiiviskaneeringuid. Iga leiu päritolu jääb jälgitavaks, dokumendid on tõlgendusest lahus ning tõendatud ja tõendamata asjaolud selgelt eristatud.
 

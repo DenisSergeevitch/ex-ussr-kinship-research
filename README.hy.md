@@ -2,7 +2,7 @@
 
 ![ex-USSR Kinship Research-ի շապիկը](docs/cover.jpg)
 
-Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md) / [日本語](README.ja.md)
+Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md)
 
 **Ապացույցների վրա հիմնված ծագումնաբանական հմտություն AI գործակալների համար (Codex, Claude Code և Agent Skills-ի այլ գործարկման միջավայրեր)։** Այն գործակալին դարձնում է ընտանիքի պատմության ուշադիր հետազոտող՝ նախկին ԽՍՀՄ-ի, Խորհրդային Միության և Ռուսական կայսրության տարածքներում։ Գործակալը կարդում է եկեղեցական մատյաններ և քաղաքացիական կացության ակտեր, զինվորական, տեղահանության ու բռնաճնշումների գործեր, ինչպես նաև չինդեքսավորված արխիվային սկաններ։ Յուրաքանչյուր գտածոյի ծագումը մնում է հետագծելի, փաստաթղթերը տարանջատվում են մեկնաբանությունից, և պարզ նշվում է՝ ինչն է ապացուցված, իսկ ինչը՝ ոչ։
 

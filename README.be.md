@@ -2,7 +2,7 @@
 
 ![Вокладка ex-USSR Kinship Research](docs/cover.jpg)
 
-Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md) / [日本語](README.ja.md)
+Languages: [English](README.md) / [Русский](README.ru.md) / [Беларуская](README.be.md) / [Қазақша](README.kk.md) / [Українська](README.uk.md) / [Polski](README.pl.md) / [Deutsch](README.de.md) / [Română](README.ro.md) / [Eesti](README.et.md) / [Latviešu](README.lv.md) / [Lietuvių](README.lt.md) / [ქართული](README.ka.md) / [Հայերեն](README.hy.md) / [Azərbaycanca](README.az.md) / [Кыргызча](README.ky.md) / [Тоҷикӣ](README.tg.md) / [Türkmençe](README.tk.md) / [O‘zbekcha](README.uz.md)
 
 **Генеалагічны навык для ІІ-агентаў (Codex, Claude Code і іншых асяроддзяў Agent Skills), у якім доказы стаяць на першым месцы.** Ён ператварае агента ва ўважлівага даследчыка сямейнай гісторыі былога СССР, Савецкага Саюза і Расійскай імперыі. Агент чытае царкоўныя кнігі і запісы грамадзянскага стану, вайсковыя, дэпартацыйныя і рэпрэсіўныя справы, а таксама неіндэксаваныя архіўныя сканы. Ён захоўвае паходжанне кожнай знаходкі, аддзяляе запісы ад іх тлумачэння і адкрыта кажа, што даказана, а што не.
 

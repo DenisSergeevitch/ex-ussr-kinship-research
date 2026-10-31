@@ -3,7 +3,7 @@ name: ex-ussr-kinship-research
 description: Исследует родственные связи и семейную историю по персональным данным и документам с фокусом на бывший СССР, СССР и Российскую империю. Использовать для генеалогического поиска, сопоставления однофамильцев, архивных, метрических, военных, миграционных и репрессивных записей, построения доказательной цепочки и итогового отчёта. Не использовать для слежки за живыми людьми, поиска их текущих контактов или адресов, доступа к закрытым данным, обхода защиты и утверждения биологического родства без независимого подтверждения. EN — evidence-first genealogy and family-history research for the former USSR, the USSR and the Russian Empire (church/metric books, civil registration, military, migration, deportation and repression records, unindexed archive scans, namesake disambiguation, evidence chains, final report). Reads existing family trees as leads and exports source-cited trees in GEDCOM format when requested. Replies in the user's language. Not for tracking living people.
 compatibility: Предпочтительны внутренний браузер или веб-поиск, чтение PDF/DOCX/изображений и создание файлов. Использует доступные средства веб-поиска, каталоги/API и локальные материалы; отсутствие одного инструмента не останавливает остальные проверки. Работает как skill для Codex и Claude Code.
 metadata:
-  version: "1.29.0"
+  version: "1.30.0"
   language: "ru"
   reply_language: "user"
   region: "ex-USSR"
