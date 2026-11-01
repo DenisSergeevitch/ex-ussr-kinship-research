@@ -1,5 +1,14 @@
 # Release history
 
+## 1.31.0 — 2026-11-01
+
+- Add the Minusinsk museum's digitized newspapers and district-library memory books and local-history guides, with institutional provenance, attributed access checks and collection-specific evidence limits ([#126](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/126)).
+- Refine burial-register and Siberian archive routes with dated contributor observations, bounded query results and API-filter checks. Add Ritual-portal/Sveca as qualified leads; keep mirrored records dependent, sampled coverage uncertain and access restrictions under the existing workflow ([#127](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/127)).
+- Clarify control queries, church dedications and DNA-match field provenance without treating a failed control as a diagnosed fault or a service label as proof of ancestry. Improve targeting near consequential UI controls using the available browser tools and report only verified accidental-action outcomes ([#128](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/128)).
+- Record the observed separate timers for prepaid GIS UIAD orders while preserving flexible session lengths and current-term checks ([#129](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/129)).
+- Add early-revision methods for surname-free households, alternate settlement names, parish clues and alphabet references. Compare changing household numbers and conflicting ages as evidence, retaining separate candidates where identification remains uncertain ([#130](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/130)).
+- Improve general FamilySearch browsing through existing title/year/DGS guidance, volume inventories and image-restriction checks; distinguish online coverage from archival survival instead of adding one province's collection ([#131](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/131)).
+
 ## 1.30.0 — 2026-10-31
 
 - Add a manually contributed Japanese README and its link from the canonical English README, preserving the existing language snapshots ([#122](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/122)).
