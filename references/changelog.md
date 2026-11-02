@@ -1,5 +1,13 @@
 # Release history
 
+## 1.32.0 — 2026-11-02
+
+- Preserve significant evidence and disputed exclusions selectively, validate saved copies and plan storage for large permitted downloads. Distinguish obtained, overviewed and substantially read scan ranges when handing off work, including gaps and corrected coverage ([#133](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/133), [#134](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/134)).
+- Separate family testimony about child counts, birth order and remembered relatives; preserve corrections and reassess dependent claims. Consolidate optional independent reading, preserve full identity-review context and distinguish continued acts and social roles from kinship ([#135](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/135), [#136](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/136), [#138](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/138)).
+- Add a bibliographic personal-name dictionary route without treating name variants as identity evidence. Make access handoffs actionable through exact document locators and changed-condition rechecks in the existing browser workflow ([#137](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/137), [#139](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/139)).
+- Consolidate long-running research continuity, correction history and evidence-qualified reader-tree guidance in existing references. Add qualified Mari El, Pavlodar and Uzbekistan archive routes and safe cleanup of completed agent-created tabs; omit numeric research quotas, parallel policy documents and unnecessary private-case fingerprints ([#140](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/140)).
+- Add the Russian State Library catalogue and proportional annual-index navigation, retaining page-image verification, actual search coverage and the distinction between an index's publication year and its covered period ([#141](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/141)).
+
 ## 1.31.0 — 2026-11-01
 
 - Add the Minusinsk museum's digitized newspapers and district-library memory books and local-history guides, with institutional provenance, attributed access checks and collection-specific evidence limits ([#126](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/126)).
