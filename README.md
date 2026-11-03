@@ -54,6 +54,10 @@ git clone https://github.com/DenisSergeevitch/ex-ussr-kinship-research ~/.claude
 
 For a single project, put the folder in `.claude/skills/` inside the repository. Most scripts need only Python 3 and the standard library. The optional `scan_montage.py` helper needs Pillow; `build_pdf.py` needs a Chromium-based browser.
 
+### Try it without installing
+
+[Kinship Research](https://kinship-research.market.near.ai) on NEAR AI Agent Market is a hosted agent built on this skill. Send it a brief and it returns a research report with sources and next steps. It is a paid service run by [kirikov](https://github.com/kirikov); it is not part of this repository.
+
 ## Use
 
 Describe the family question. The agent works from available information and continues while questions or access requests await a reply. For example:
