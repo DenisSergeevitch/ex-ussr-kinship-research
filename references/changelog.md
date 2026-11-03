@@ -1,5 +1,9 @@
 # Release history
 
+## 1.34.0 — 2026-11-04
+
+- Add focused troubleshooting for files accepted by a local GEDCOM parser but rejected by the user's chosen importer. Distinguish version-specific dates, identifiers and escaping from service compatibility; preserve provenance and uncertainty, use optional synthetic diagnostics, and guard existing trees against destructive subset reimports. Remove unsupported service-template guarantees and retain local exports without requiring a particular parser or external upload ([#154](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/154)).
+
 ## 1.33.0 — 2026-11-03
 
 - Extend military research with casualty-list family columns, wound-card references, burial and reburial records, and qualified municipal war-list leads. Keep search-field behavior and evacuation-database observations attributed; reuse existing preservation, identity and source-dependence guidance ([#143](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/143), [#148](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/148), [#150](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/150)).
