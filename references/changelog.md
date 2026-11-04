@@ -1,5 +1,17 @@
 # Release history
 
+## 1.34.0 — 2026-11-04
+
+- Add focused troubleshooting for files accepted by a local GEDCOM parser but rejected by the user's chosen importer. Distinguish version-specific dates, identifiers and escaping from service compatibility; preserve provenance and uncertainty, use optional synthetic diagnostics, and guard existing trees against destructive subset reimports. Remove unsupported service-template guarantees and retain local exports without requiring a particular parser or external upload ([#154](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/154)).
+
+## 1.33.0 — 2026-11-03
+
+- Extend military research with casualty-list family columns, wound-card references, burial and reburial records, and qualified municipal war-list leads. Keep search-field behavior and evacuation-database observations attributed; reuse existing preservation, identity and source-dependence guidance ([#143](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/143), [#148](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/148), [#150](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/150)).
+- Add an Orenburg Cossack research route for Chelyabinsk and Verkhneuralsk, qualifying the Vishnevsky surname guide's coverage, modernized spelling and revision mentions. Include the free Three Pines collection and optional read-only source tools without making them a dependency or automating installation; preserve differences between geographic guidance, source mentions and established residence ([#144](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/144)).
+- Add Latgale and eastern Belarus duplicate-register routes and contextual Polish/Latin reading guidance; qualify Latvian archive, cemetery and periodical coverage. Refine place-filter controls, civil-register date and access checks, parish aliases and handwritten section-year verification ([#145](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/145), [#146](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/146), [#147](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/147)).
+- Add qualified Bashkortostan burial and Timenote routes, distinguish former settlements from modern reservoir geography, and clarify family-interview and archive-request observations without inferring complete coverage or source independence ([#148](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/148), [#150](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/150)).
+- Preserve existing reading coverage when a separate index is absent and coordinate overlapping assignments through existing write ownership and handoff rules, allowing shared reading and verification instead of mandatory source reservations ([#149](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/149)).
+
 ## 1.32.0 — 2026-11-02
 
 - Preserve significant evidence and disputed exclusions selectively, validate saved copies and plan storage for large permitted downloads. Distinguish obtained, overviewed and substantially read scan ranges when handing off work, including gaps and corrected coverage ([#133](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/133), [#134](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/134)).
