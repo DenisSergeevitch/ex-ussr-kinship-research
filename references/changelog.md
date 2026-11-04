@@ -1,7 +1,8 @@
 # Release history
 
-## Unreleased
+## 1.35.0 — 2026-11-04
 
+- Credit Viktor in the English README footer for the conversations about using Claude for family-history research that helped inspire this skill.
 - Add archival catalog and Moscow meshchanin navigation, a dated Nizhny Novgorod fund-guide route and qualified RGASPI party-record catalog leads. Separate contributor observations and edition history from current access, holdings and person-level evidence ([#96](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/96)).
 - Preserve historical place labels in foreign POW indexes and validate query conditions against returned rows. Attribute anomalous Geneteka/Arolsen observations without diagnosing their cause or implying a safe request threshold; use the existing validation and access workflows ([#158](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/158)).
 - Add qualified German, Finnish and Polish POW and burial sources, retaining per-record provenance and attributed access observations. Keep routine permitted downloads autonomous and scope requester-data handoffs to the affected action ([#157](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/157)).
