@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add archival catalog and Moscow meshchanin navigation, a dated Nizhny Novgorod fund-guide route and qualified RGASPI party-record catalog leads. Separate contributor observations and edition history from current access, holdings and person-level evidence ([#96](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/96)).
 - Preserve historical place labels in foreign POW indexes and validate query conditions against returned rows. Attribute anomalous Geneteka/Arolsen observations without diagnosing their cause or implying a safe request threshold; use the existing validation and access workflows ([#158](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/158)).
 - Add qualified German, Finnish and Polish POW and burial sources, retaining per-record provenance and attributed access observations. Keep routine permitted downloads autonomous and scope requester-data handoffs to the affected action ([#157](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/157)).
 - Add premarital examination records, bride-parish searching and multi-parish copy-volume navigation. Keep birth-range estimates provisional, identify each claim's informant or attached record, and consolidate copy/coverage guidance in its existing home ([#156](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/156)).
