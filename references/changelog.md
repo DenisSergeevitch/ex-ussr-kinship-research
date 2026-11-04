@@ -1,5 +1,9 @@
 # Release history
 
+## Unreleased
+
+- Add premarital examination records, bride-parish searching and multi-parish copy-volume navigation. Keep birth-range estimates provisional, identify each claim's informant or attached record, and consolidate copy/coverage guidance in its existing home ([#156](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/156)).
+
 ## 1.34.0 — 2026-11-04
 
 - Add focused troubleshooting for files accepted by a local GEDCOM parser but rejected by the user's chosen importer. Distinguish version-specific dates, identifiers and escaping from service compatibility; preserve provenance and uncertainty, use optional synthetic diagnostics, and guard existing trees against destructive subset reimports. Remove unsupported service-template guarantees and retain local exports without requiring a particular parser or external upload ([#154](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/154)).
