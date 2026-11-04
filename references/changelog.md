@@ -1,5 +1,9 @@
 # Release history
 
+## Unreleased
+
+- Add qualified German, Finnish and Polish POW and burial sources, retaining per-record provenance and attributed access observations. Keep routine permitted downloads autonomous and scope requester-data handoffs to the affected action ([#157](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/157)).
+
 ## 1.34.0 — 2026-11-04
 
 - Add focused troubleshooting for files accepted by a local GEDCOM parser but rejected by the user's chosen importer. Distinguish version-specific dates, identifiers and escaping from service compatibility; preserve provenance and uncertainty, use optional synthetic diagnostics, and guard existing trees against destructive subset reimports. Remove unsupported service-template guarantees and retain local exports without requiring a particular parser or external upload ([#154](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/154)).
