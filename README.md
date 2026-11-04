@@ -149,3 +149,5 @@ Source-search helpers use Python's standard library and the existing case regist
 ---
 
 Maintained by Denis Shiryaev ([@DenisSergeevitch](https://github.com/DenisSergeevitch)).
+
+Special thanks to [Viktor](https://tiulp.in/) for the conversations about using Claude for family-history research that helped inspire this skill.
