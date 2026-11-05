@@ -176,8 +176,6 @@ def main(argv=None) -> int:
 
     def record_sheet(chunk, target):
         print(target, flush=True)
-        for path in chunk:
-            print(f"Подготовлен кадр {frame_number(path)}: {path} → {target}", file=sys.stderr, flush=True)
 
     try:
         out_dir.mkdir(parents=True, exist_ok=True)

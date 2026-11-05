@@ -60,7 +60,7 @@ class Montage(unittest.TestCase):
             with Image.open(out / "strip-0001-0002.jpg") as sheet:
                 self.assertEqual(sheet.size[0], 370)
 
-    def test_output_reports_sources_settings_and_skipped_images(self):
+    def test_output_reports_sheets_settings_and_skipped_images(self):
         with tempfile.TemporaryDirectory() as tmp:
             src, out = Path(tmp, "src"), Path(tmp, "out")
             src.mkdir()
@@ -70,14 +70,14 @@ class Montage(unittest.TestCase):
             output, error = io.StringIO(), io.StringIO()
             with contextlib.redirect_stdout(output), contextlib.redirect_stderr(error):
                 code = main([str(src), "--out", str(out), "--box", "0,0,1,0.5", "--half", "auto",
-                             "--rotate", "90", "--per-sheet", "1"])
+                             "--rotate", "90", "--per-sheet", "2"])
             self.assertEqual(code, 0)
-            self.assertIn("strip-0001-0001.jpg", output.getvalue())
-            self.assertIn("strip-0003-0003.jpg", output.getvalue())
-            for value in ("0001.jpg", "0003.jpg", "cover.jpg", "0.5", "auto", "90"):
+            self.assertIn("strip-0001-0003.jpg", output.getvalue())
+            for value in ("cover.jpg", "0.5", "auto", "90"):
                 self.assertIn(value, error.getvalue())
-            self.assertIn("strip-0001-0001.jpg", error.getvalue())
-            self.assertIn("strip-0003-0003.jpg", error.getvalue())
+            self.assertEqual(len(output.getvalue().splitlines()), 1)
+            self.assertNotIn("strip-0001-0003.jpg", error.getvalue())
+            self.assertNotIn("0001.jpg", error.getvalue())
             self.assertFalse(list(Path(tmp).glob("*.json")))
 
     def test_failure_reports_completed_sheets_and_safe_restart(self):
@@ -94,7 +94,6 @@ class Montage(unittest.TestCase):
             self.assertIn("strip-0001-0002.jpg", output.getvalue())
             self.assertIn("--first 3", error.getvalue())
             self.assertIn("0004.jpg", error.getvalue())
-            self.assertIn("0001.jpg", error.getvalue())
             self.assertNotIn("0003.jpg", output.getvalue())
             Image.new("L", (200, 400)).save(src / "0004.jpg")
             with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
