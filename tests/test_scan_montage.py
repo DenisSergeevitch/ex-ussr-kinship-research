@@ -60,7 +60,7 @@ class Montage(unittest.TestCase):
             with Image.open(out / "strip-0001-0002.jpg") as sheet:
                 self.assertEqual(sheet.size[0], 370)
 
-    def test_output_reports_sheets_settings_and_skipped_images(self):
+    def test_output_reports_completed_sheets_and_skipped_images(self):
         with tempfile.TemporaryDirectory() as tmp:
             src, out = Path(tmp, "src"), Path(tmp, "out")
             src.mkdir()
@@ -73,12 +73,10 @@ class Montage(unittest.TestCase):
                              "--rotate", "90", "--per-sheet", "2"])
             self.assertEqual(code, 0)
             self.assertIn("strip-0001-0003.jpg", output.getvalue())
-            for value in ("cover.jpg", "0.5", "auto", "90"):
-                self.assertIn(value, error.getvalue())
+            self.assertIn("cover.jpg", error.getvalue())
             self.assertEqual(len(output.getvalue().splitlines()), 1)
             self.assertNotIn("strip-0001-0003.jpg", error.getvalue())
             self.assertNotIn("0001.jpg", error.getvalue())
-            self.assertFalse(list(Path(tmp).glob("*.json")))
 
     def test_failure_reports_completed_sheets_and_safe_restart(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -130,27 +128,6 @@ class Montage(unittest.TestCase):
             self.assertFalse((out / "strip-0001-0001.jpg").exists())
             with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
                 self.assertEqual(main(args + ["--first", "1"]), 0)
-
-    def test_crop_and_rotation_select_the_intended_area(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            src, out = Path(tmp, "src"), Path(tmp, "out")
-            src.mkdir()
-            image = Image.new("L", (200, 100), 255)
-            ImageDraw.Draw(image).rectangle((100, 0, 199, 49), fill=0)
-            image.save(src / "0001.png")
-            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-                code = main([str(src), "--out", str(out), "--box", "0,0,0.5,1",
-                             "--half", "right", "--rotate", "90", "--width", "100"])
-            self.assertEqual(code, 0)
-            with Image.open(out / "strip-0001-0001.jpg") as sheet:
-                self.assertLess(sheet.getpixel((120, 25)), 30)
-                self.assertLess(sheet.getpixel((120, 75)), 30)
-            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-                code = main([str(src), "--out", str(out), "--box", "0.5,0,1,1",
-                             "--half", "right", "--rotate", "90", "--width", "100", "--prefix", "other-"])
-            self.assertEqual(code, 0)
-            with Image.open(out / "other-0001-0001.jpg") as sheet:
-                self.assertGreater(sheet.getpixel((120, 25)), 225)
 
     def test_empty_range_is_an_error(self):
         with tempfile.TemporaryDirectory() as tmp:

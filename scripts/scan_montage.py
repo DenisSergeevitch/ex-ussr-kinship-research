@@ -24,13 +24,16 @@ def frame_number(path: Path) -> int | None:
     return int(match.group(1)) if match else None
 
 
-def select_frames(directory: Path, first: int | None, last: int | None) -> list[Path]:
+def select_frames(directory: Path, first: int | None, last: int | None,
+                  skipped: list[Path] | None = None) -> list[Path]:
     frames = []
     for path in sorted(directory.iterdir()):
         if not path.is_file() or path.suffix.lower() not in IMAGE_SUFFIXES:
             continue
         number = frame_number(path)
         if number is None:
+            if skipped is not None:
+                skipped.append(path)
             continue
         if first is not None and number < first:
             continue
@@ -109,24 +112,24 @@ def build_sheets(frames, box, half, rotate, width, contrast, per_sheet, out_dir:
                 row.paste(strip, (label_width, 0))
                 ImageDraw.Draw(row).text((4, 4), str(frame_number(path)), fill=0)
                 rows.append(row)
+            path = None
             sheet = Image.new("L", (label_width + width, sum(r.size[1] for r in rows)), 255)
             y = 0
             for row in rows:
                 sheet.paste(row, (0, y))
                 y += row.size[1]
-            path = None
             output = target.open("xb")
             try:
                 with output:
                     sheet.save(output, format="JPEG", quality=82)
-            except Exception:
-                target.unlink()
+            except BaseException:
+                target.unlink(missing_ok=True)
                 raise
-        except (OSError, ValueError) as exc:
+        except (OSError, ValueError, Image.DecompressionBombError) as exc:
             raise MontageFailure(exc, frame_number(chunk[0]), path) from exc
         written.append(target)
         if on_sheet is not None:
-            on_sheet(chunk, target)
+            on_sheet(target)
     return written
 
 
@@ -161,26 +164,19 @@ def main(argv=None) -> int:
     if args.per_sheet < 1 or args.width < 50:
         print("Ошибка: --per-sheet должно быть ≥ 1, --width ≥ 50", file=sys.stderr)
         return 2
-    skipped = [p for p in sorted(directory.iterdir())
-               if p.is_file() and p.suffix.lower() in IMAGE_SUFFIXES and frame_number(p) is None]
-    for path in skipped:
-        print(f"Пропущено изображение без номера кадра: {path}", file=sys.stderr)
-    frames = select_frames(directory, args.first, args.last)
-    if not frames:
-        print("Ошибка: в заданном диапазоне нет кадров", file=sys.stderr)
-        return 1
     out_dir = Path(args.out).expanduser()
-    print(f"Параметры: папка={directory}; область={args.box}; половина={args.half}; "
-          f"поворот={args.rotate}; ширина={args.width}; контраст={args.contrast}; "
-          f"кадров на ленту={args.per_sheet}; first={args.first}; last={args.last}", file=sys.stderr)
-
-    def record_sheet(chunk, target):
-        print(target, flush=True)
-
     try:
+        skipped = []
+        frames = select_frames(directory, args.first, args.last, skipped)
+        for path in skipped:
+            print(f"Пропущено изображение без номера кадра: {path}", file=sys.stderr)
+        if not frames:
+            print("Ошибка: в заданном диапазоне нет кадров", file=sys.stderr)
+            return 1
         out_dir.mkdir(parents=True, exist_ok=True)
         written = build_sheets(frames, args.box, args.half, args.rotate, args.width, args.contrast,
-                               args.per_sheet, out_dir, args.prefix, record_sheet)
+                               args.per_sheet, out_dir, args.prefix,
+                               on_sheet=lambda target: print(target, flush=True))
     except MontageFailure as exc:
         failed = f"; исходный файл: {exc.failed_source}" if exc.failed_source else ""
         print(f"Ошибка: {exc}{failed}. После устранения причины продолжите с --first {exc.next_frame}",
