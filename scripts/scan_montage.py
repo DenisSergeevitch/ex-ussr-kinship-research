@@ -74,7 +74,15 @@ def make_strip(path: Path, box, half: str, rotate: int, width: int, contrast: fl
     return strip.resize((width, height))
 
 
-def build_sheets(frames, box, half, rotate, width, contrast, per_sheet, out_dir: Path, prefix: str):
+class MontageFailure(Exception):
+    def __init__(self, cause, next_frame, failed_source):
+        super().__init__(str(cause))
+        self.next_frame = next_frame
+        self.failed_source = failed_source
+
+
+def build_sheets(frames, box, half, rotate, width, contrast, per_sheet, out_dir: Path, prefix: str,
+                 on_sheet=None):
     from PIL import Image, ImageDraw
 
     if "/" in prefix or "\\" in prefix:
@@ -92,21 +100,33 @@ def build_sheets(frames, box, half, rotate, width, contrast, per_sheet, out_dir:
     label_width = 70
     written = []
     for chunk, target in zip(chunks, targets):
-        rows = []
-        for path in chunk:
-            strip = make_strip(path, box, half, rotate, width, contrast)
-            row = Image.new("L", (label_width + width, strip.size[1] + 4), 255)
-            row.paste(strip, (label_width, 0))
-            ImageDraw.Draw(row).text((4, 4), str(frame_number(path)), fill=0)
-            rows.append(row)
-        sheet = Image.new("L", (label_width + width, sum(r.size[1] for r in rows)), 255)
-        y = 0
-        for row in rows:
-            sheet.paste(row, (0, y))
-            y += row.size[1]
-        with target.open("xb") as output:
-            sheet.save(output, format="JPEG", quality=82)
+        path = None
+        try:
+            rows = []
+            for path in chunk:
+                strip = make_strip(path, box, half, rotate, width, contrast)
+                row = Image.new("L", (label_width + width, strip.size[1] + 4), 255)
+                row.paste(strip, (label_width, 0))
+                ImageDraw.Draw(row).text((4, 4), str(frame_number(path)), fill=0)
+                rows.append(row)
+            sheet = Image.new("L", (label_width + width, sum(r.size[1] for r in rows)), 255)
+            y = 0
+            for row in rows:
+                sheet.paste(row, (0, y))
+                y += row.size[1]
+            path = None
+            output = target.open("xb")
+            try:
+                with output:
+                    sheet.save(output, format="JPEG", quality=82)
+            except Exception:
+                target.unlink()
+                raise
+        except (OSError, ValueError) as exc:
+            raise MontageFailure(exc, frame_number(chunk[0]), path) from exc
         written.append(target)
+        if on_sheet is not None:
+            on_sheet(chunk, target)
     return written
 
 
@@ -141,20 +161,36 @@ def main(argv=None) -> int:
     if args.per_sheet < 1 or args.width < 50:
         print("Ошибка: --per-sheet должно быть ≥ 1, --width ≥ 50", file=sys.stderr)
         return 2
+    skipped = [p for p in sorted(directory.iterdir())
+               if p.is_file() and p.suffix.lower() in IMAGE_SUFFIXES and frame_number(p) is None]
+    for path in skipped:
+        print(f"Пропущено изображение без номера кадра: {path}", file=sys.stderr)
     frames = select_frames(directory, args.first, args.last)
     if not frames:
         print("Ошибка: в заданном диапазоне нет кадров", file=sys.stderr)
         return 1
     out_dir = Path(args.out).expanduser()
-    out_dir.mkdir(parents=True, exist_ok=True)
+    print(f"Параметры: папка={directory}; область={args.box}; половина={args.half}; "
+          f"поворот={args.rotate}; ширина={args.width}; контраст={args.contrast}; "
+          f"кадров на ленту={args.per_sheet}; first={args.first}; last={args.last}", file=sys.stderr)
+
+    def record_sheet(chunk, target):
+        print(target, flush=True)
+        for path in chunk:
+            print(f"Подготовлен кадр {frame_number(path)}: {path} → {target}", file=sys.stderr, flush=True)
+
     try:
+        out_dir.mkdir(parents=True, exist_ok=True)
         written = build_sheets(frames, args.box, args.half, args.rotate, args.width, args.contrast,
-                               args.per_sheet, out_dir, args.prefix)
+                               args.per_sheet, out_dir, args.prefix, record_sheet)
+    except MontageFailure as exc:
+        failed = f"; исходный файл: {exc.failed_source}" if exc.failed_source else ""
+        print(f"Ошибка: {exc}{failed}. После устранения причины продолжите с --first {exc.next_frame}",
+              file=sys.stderr)
+        return 2
     except (OSError, ValueError) as exc:
         print(f"Ошибка: {exc}", file=sys.stderr)
         return 2
-    for path in written:
-        print(path)
     print(f"Кадров: {len(frames)}; лент: {len(written)}", file=sys.stderr)
     return 0
 
