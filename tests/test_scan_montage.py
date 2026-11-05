@@ -6,6 +6,7 @@ import contextlib
 import io
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from scripts.scan_montage import frame_number, main, parse_box, select_frames
@@ -58,6 +59,75 @@ class Montage(unittest.TestCase):
             self.assertEqual(names, ["strip-0001-0002.jpg", "strip-0003-0004.jpg", "strip-0005-0005.jpg"])
             with Image.open(out / "strip-0001-0002.jpg") as sheet:
                 self.assertEqual(sheet.size[0], 370)
+
+    def test_output_reports_completed_sheets_and_skipped_images(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            src, out = Path(tmp, "src"), Path(tmp, "out")
+            src.mkdir()
+            self.make_frames(src, 3, landscape=True)
+            (src / "0002.jpg").unlink()
+            Image.new("L", (10, 10)).save(src / "cover.jpg")
+            output, error = io.StringIO(), io.StringIO()
+            with contextlib.redirect_stdout(output), contextlib.redirect_stderr(error):
+                code = main([str(src), "--out", str(out), "--box", "0,0,1,0.5", "--half", "auto",
+                             "--rotate", "90", "--per-sheet", "2"])
+            self.assertEqual(code, 0)
+            self.assertIn("strip-0001-0003.jpg", output.getvalue())
+            self.assertIn("cover.jpg", error.getvalue())
+            self.assertEqual(len(output.getvalue().splitlines()), 1)
+            self.assertNotIn("strip-0001-0003.jpg", error.getvalue())
+            self.assertNotIn("0001.jpg", error.getvalue())
+
+    def test_failure_reports_completed_sheets_and_safe_restart(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            src, out = Path(tmp, "src"), Path(tmp, "out")
+            src.mkdir()
+            self.make_frames(src, 4, landscape=False)
+            (src / "0004.jpg").write_bytes(b"not an image")
+            output, error = io.StringIO(), io.StringIO()
+            args = [str(src), "--out", str(out), "--box", "0,0,1,1", "--per-sheet", "2"]
+            with contextlib.redirect_stdout(output), contextlib.redirect_stderr(error):
+                code = main(args)
+            self.assertEqual(code, 2)
+            self.assertIn("strip-0001-0002.jpg", output.getvalue())
+            self.assertIn("--first 3", error.getvalue())
+            self.assertIn("0004.jpg", error.getvalue())
+            self.assertNotIn("0003.jpg", output.getvalue())
+            Image.new("L", (200, 400)).save(src / "0004.jpg")
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(main(args + ["--first", "3"]), 0)
+            self.assertTrue((out / "strip-0003-0004.jpg").exists())
+
+    def test_close_failure_removes_partial_sheet_and_allows_retry(self):
+        class CloseFails:
+            def __init__(self, file):
+                self.file = file
+
+            def __enter__(self):
+                return self.file
+
+            def __exit__(self, *args):
+                self.file.close()
+                raise OSError("simulated close failure")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            src, out = Path(tmp, "src"), Path(tmp, "out")
+            src.mkdir()
+            self.make_frames(src, 1, landscape=False)
+            original_open = Path.open
+
+            def fail_close(path, *args, **kwargs):
+                file = original_open(path, *args, **kwargs)
+                return CloseFails(file) if args and args[0] == "xb" else file
+
+            args = [str(src), "--out", str(out), "--box", "0,0,1,1"]
+            error = io.StringIO()
+            with patch.object(Path, "open", fail_close), contextlib.redirect_stderr(error):
+                self.assertEqual(main(args), 2)
+            self.assertIn("--first 1", error.getvalue())
+            self.assertFalse((out / "strip-0001-0001.jpg").exists())
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(main(args + ["--first", "1"]), 0)
 
     def test_empty_range_is_an_error(self):
         with tempfile.TemporaryDirectory() as tmp:

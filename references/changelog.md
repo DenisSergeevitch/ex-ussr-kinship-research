@@ -1,5 +1,12 @@
 # Release history
 
+## 1.36.0 — 2026-11-05
+
+- Extend Belarus, Podlasie and Volhynia archive navigation with scoped intake, parish-copy and catalogue observations. Preserve bounded index coverage and resume access checks when conditions change. Add Belarusian parish and burial finders and a second route into PTG indexes ([#160](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/160), [#161](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/161)).
+- Add Bashkortostan book, catalogue and index routes with bounded collection coverage and separate derived fields from original readings. Extend surname-free revision guidance to a published nineteenth-century example and clarify the patronymic form ([#162](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/162), [#163](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/163)).
+- Clarify how to search a metric book and closely read a selected entry, including doubtful handwriting and comparison of enhanced scans with originals. The montage helper reports skipped unnumbered images, emits completed sheet paths as it works and gives a restart frame after a handled failure. Incomplete outputs are cleaned up while existing sheets are protected ([#164](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/164)).
+- Add qualified Jewish, emigration and Siberian source routes and clarify the role of MyHeritage ancestral places in DNA-match research. Preserve claim-level provenance and distinguish original records from indexes, mirrors and tree hints ([#165](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/165)).
+
 ## 1.35.0 — 2026-11-04
 
 - Credit Viktor in the English README footer for the conversations about using Claude for family-history research that helped inspire this skill.
