@@ -1,5 +1,12 @@
 # Release history
 
+## 1.37.0 — 2026-11-07
+
+- Add a qualified Bashkir revision-list index and refine Ufagen search and settlement-name disambiguation. Preserve transcription provenance, bounded coverage and date-specific locality checks ([#167](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/167), [#170](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/170)).
+- Add Chișinău notarial inventory and Arcanum newspaper routes, with separate checks for catalogue descriptions, OCR, original documents and access ([#168](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/168)).
+- Improve metric-book month identification and handling of OCR or model disagreement. Preserve unresolved readings and distinguish birth from baptism ([#171](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/171)).
+- Record dated Ukrainian archive restrictions affecting Belarusian applicants with current applicability qualified. Add Belarus civilian-camp, auction and optional public web-archive routes with provenance and access boundaries ([#172](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/172)).
+
 ## 1.36.0 — 2026-11-05
 
 - Extend Belarus, Podlasie and Volhynia archive navigation with scoped intake, parish-copy and catalogue observations. Preserve bounded index coverage and resume access checks when conditions change. Add Belarusian parish and burial finders and a second route into PTG indexes ([#160](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/160), [#161](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/161)).
