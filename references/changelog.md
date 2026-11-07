@@ -1,5 +1,13 @@
 # Release history
 
+## 1.38.0 — 2026-11-07
+
+- Verify that archive viewers show the selected frame or index cards before counting them as reviewed. Consolidate loading and retry guidance, preserve index-only scope, and qualify gaps in interleaved parish-book sections ([#174](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/174), [#182](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/182)).
+- Add the Ingria Archive as an optional transcription and record-image lead, with publisher-reported coverage, reconstruction limits and task-scoped access ([#175](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/175)).
+- Add a focused Armenia and South Caucasus research route and qualified Samara census, Shushi inscription and RKKA unit-reference leads. Keep source observations attributed, distinguish records from derived indexes, and quarantine the Shushi publication's exclusionary political narrative ([#176](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/176), [#177](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/177)).
+- Correct SQLite Unicode matching guidance and preserve language-aware spelling variants. Add original, optional family-interview prompts through the existing testimony and privacy workflow; replace the proposed copied course handout ([#178](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/178), [#179](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/179)).
+- Add the RVIO memorial-site map as a class C lead, separating user-submitted descriptions from individually checked inscription images and qualifying untested coverage ([#181](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/181)).
+
 ## 1.37.0 — 2026-11-07
 
 - Add a qualified Bashkir revision-list index and refine Ufagen search and settlement-name disambiguation. Preserve transcription provenance, bounded coverage and date-specific locality checks ([#167](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/167), [#170](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/170)).
