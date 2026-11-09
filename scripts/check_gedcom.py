@@ -309,8 +309,9 @@ def check_registers(records: list[Node], case_dir: Path, errors: list[str], warn
     for record in records:
         if record.tag in ("INDI", "FAM"):
             for event in record.children:
-                if event.tag in EVENT_TAGS and event.first("SOUR") is None:
-                    warnings.append(f"строка {event.line}: {record.xref} {event.tag} без SOUR")
+                states_fact = event.first("DATE") is not None or event.first("PLAC") is not None
+                if event.tag in EVENT_TAGS and states_fact and event.first("SOUR") is None:
+                    warnings.append(f"строка {event.line}: {record.xref} {event.tag} с датой или местом без SOUR")
 
 
 def check_file(path: Path, case_dir: Path | None = None) -> dict:

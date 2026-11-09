@@ -218,12 +218,14 @@ class RegisterTest(GedcomCase):
         self.relation("R-0002", "P-0001", "parent-of", "P-0003", "single-source")
         self.relation("R-0003", "P-0002", "parent-of", "P-0003", "single-source")
         self.relation("R-0004", "P-0001", "parent-of", "P-0004", "single-source")
-        body = FAMILY.replace("2 SOUR @S1@\n", "") + "0 @I4@ INDI\n1 REFN P-0004\n0 @I5@ INDI\n"
+        body = (FAMILY.replace("2 SOUR @S1@\n", "") + "0 @I4@ INDI\n1 REFN P-0004\n0 @I5@ INDI\n")
+        body = body.replace("1 REFN P-0001\n", "1 REFN P-0001\n1 DEAT Y\n2 NOTE дата не установлена\n")
         warnings = self.check(gedcom(body), case_dir=self.case)["warnings"]
         expected = ("пара P-0001 и P-0002 без строки", "R-0004", "living_status unknown",
-                    "@I3@ BIRT без SOUR", "не сверены: @I5@")
+                    "@I3@ BIRT с датой или местом без SOUR", "не сверены: @I5@")
         for text in expected:
             self.assertTrue(any(text in w for w in warnings), (text, warnings))
+        self.assertFalse(any("@I1@ DEAT" in w for w in warnings), warnings)
 
     def test_cli(self) -> None:
         path = self.dir / "tree.ged"
