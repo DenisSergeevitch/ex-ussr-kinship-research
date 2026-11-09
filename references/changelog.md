@@ -1,5 +1,13 @@
 # Release history
 
+## 1.39.0 — 2026-11-09
+
+- Refine unindexed FamilySearch navigation with qualified DGS/item routing, film-title checks and mirror spellings. Distinguish public metadata from authenticated search and reuse existing access and coverage guidance ([#184](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/184)).
+- Add a privacy-scoped route to published citizenship decrees and extend GASO finding-aid navigation. Distinguish a decree's statements from independently established family relationships, and clerical personnel records from parishioner lists ([#185](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/185), [#186](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/186)).
+- Consolidate authorized result handoffs, unresolved application decisions and matching delivery provenance in the existing coordination workflow. Preserve explicit user budgets across continuations without introducing a queue, framework or default quota ([#187](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/187), [#188](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/188)).
+- Keep plans conditional when living status is unknown, calculate kinship from actual relationship paths, and distinguish chat/export timestamps from photo capture dates. Correct the proposed cousin-degree example and avoid inferring timestamp semantics from a filename ([#189](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/189), [#192](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/192), [#193](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/193)).
+- Extend qualified Chuvash, Volga German, Novgorod, Don, Tambov, railway and Kazakhstan catalogue routes. Preserve community-source labels, contributor observations and actual access limits ([#190](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/190), [#191](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/191), [#194](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/194)).
+
 ## 1.38.0 — 2026-11-07
 
 - Verify that archive viewers show the selected frame or index cards before counting them as reviewed. Consolidate loading and retry guidance, preserve index-only scope, and qualify gaps in interleaved parish-book sections ([#174](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/174), [#182](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/182)).
