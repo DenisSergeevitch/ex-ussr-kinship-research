@@ -17,7 +17,7 @@ from pathlib import Path
 from scripts.audit_evidence import artifact_groups, has_direct_record
 
 SCRIPTS = Path(__file__).resolve().parent.parent / "scripts"
-CLI_SCRIPTS = ("audit_evidence.py", "build_pdf.py", "familysearch.py", "gwar.py",
+CLI_SCRIPTS = ("audit_evidence.py", "build_pdf.py", "check_gedcom.py", "familysearch.py", "gwar.py",
                "hash_artifact.py", "init_case.py", "register_search.py")
 
 ARTIFACT = "{id},,title,url,,,,,,,P-0001,,,,direct,image-of-original,{group},clear,,,{claims},,"
