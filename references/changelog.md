@@ -1,5 +1,12 @@
 # Release history
 
+## 1.40.0 — 2026-11-09
+
+- Add an optional local UTF-8 GEDCOM lint helper with bounded version-specific structural checks and selected case-register comparisons. Correct relationship matching and diagnostics, preserve valid version-specific forms, and make unsupported schema, calendar, pedigree, citation and importer checks explicit ([#199](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/199)).
+- Add generalized Ukrainian archive routes for Archium, Poltava, Sumy, occupation-administration lists and Hetmanate revisions. Replace case-specific fingerprints and bulk-retrieval recipes with scoped search, accurate provenance and qualified coverage; a year filter does not establish living status ([#196](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/196)).
+- Refine targeted checks of short household kinship formulas and their referents, without treating every kinship term as parenthood or requiring a crop for every readable record ([#197](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/197)).
+- Add BillionGraves as a qualified community cemetery lead and consolidate source selection in the existing workflow. Respect its source-specific automated-access restriction, distinguish photographs from transcriptions and GPS coverage, and treat the FamilySearch collection as a dependent route rather than corroboration ([#198](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/198)).
+
 ## 1.39.0 — 2026-11-09
 
 - Refine unindexed FamilySearch navigation with qualified DGS/item routing, film-title checks and mirror spellings. Distinguish public metadata from authenticated search and reuse existing access and coverage guidance ([#184](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/184)).

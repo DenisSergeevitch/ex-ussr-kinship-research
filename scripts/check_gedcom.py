@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Check a GEDCOM file against its declared version and, optionally, the case registers."""
+"""Lint selected GEDCOM UTF-8 export rules and, optionally, case-register links.
+
+This is not a complete schema, calendar, evidence or importer validator.
+"""
 
 from __future__ import annotations
 
@@ -9,6 +12,11 @@ import json
 import re
 import sys
 from pathlib import Path
+
+try:
+    from .audit_evidence import duplicate_ids, read_csv
+except ImportError:  # Direct CLI invocation, rather than a package import.
+    from audit_evidence import duplicate_ids, read_csv
 
 ESTABLISHED = {"single-source", "corroborated", "strongly-corroborated"}
 
@@ -35,8 +43,8 @@ def _date_551() -> re.Pattern[str]:
     dual = year + r"(?:/[0-9]{2})?"
     greg = rf"(?:(?:{day} )?(?:{GREG}) {dual}|{dual}(?: B\.C\.)?)"
     julian = rf"(?:(?:{day} )?(?:{GREG}) {year}|{year}(?: B\.C\.)?)"
-    hebrew = rf"(?:(?:{day} )?(?:{HEB}) {year}|{year})"
-    french = rf"(?:(?:{day} )?(?:{FREN}) {year}|{year})"
+    hebrew = rf"(?:(?:{day} )?(?:{HEB}) {year}|{year}(?: B\.C\.)?)"
+    french = rf"(?:(?:{day} )?(?:{FREN}) {year}|{year}(?: B\.C\.)?)"
     date = (rf"(?:(?:@#DGREGORIAN@ )?{greg}|@#DJULIAN@ {julian}|@#DHEBREW@ {hebrew}"
             rf"|@#DFRENCH R@ {french}|@#D(?:ROMAN|UNKNOWN)@ [^ ].*?)")
     value = (rf"{date}|FROM {date}(?: TO {date})?|TO {date}|BEF {date}|AFT {date}"
@@ -67,6 +75,7 @@ class Node:
         self.line, self.raw_level, self.level = line, raw_level, int(raw_level)
         self.xref, self.tag, self.value = xref, tag, value
         self.children: list[Node] = []
+        self.parent: Node | None = None
 
     def first(self, tag: str) -> Node | None:
         return next((child for child in self.children if child.tag == tag), None)
@@ -108,7 +117,11 @@ def parse(text: str, errors: list[str], warnings: list[str]) -> list[Node]:
         if not match:
             errors.append(f"строка {number}: не разбирается как строка GEDCOM: {line[:60]!r}")
             continue
-        node = Node(number, match["level"], match["xref"], match["tag"], match["value"])
+        try:
+            node = Node(number, match["level"], match["xref"], match["tag"], match["value"])
+        except ValueError:
+            errors.append(f"строка {number}: номер уровня не может быть разобран")
+            continue
         level = node.level
         while stack and stack[-1].level >= level:
             stack.pop()
@@ -120,15 +133,18 @@ def parse(text: str, errors: list[str], warnings: list[str]) -> list[Node]:
         else:
             if level > stack[-1].level + 1:
                 errors.append(f"строка {number}: уровень {level} после уровня {stack[-1].level}")
+            node.parent = stack[-1]
             stack[-1].children.append(node)
         stack.append(node)
     return records
 
 
 def walk(nodes: list[Node]):
-    for node in nodes:
+    pending = list(reversed(nodes))
+    while pending:
+        node = pending.pop()
         yield node
-        yield from walk(node.children)
+        pending.extend(reversed(node.children))
 
 
 def check_syntax(nodes: list[Node], lines: list[tuple[str, int]], version: str | None,
@@ -143,19 +159,32 @@ def check_syntax(nodes: list[Node], lines: list[tuple[str, int]], version: str |
             errors.append(f"{where}: недопустимый тег {node.tag!r}")
         if node.xref and not XREF[version].fullmatch(node.xref):
             errors.append(f"{where}: недопустимый XREF {node.xref}")
+        if version == "7" and node.xref == "@VOID@":
+            errors.append(f"{where}: @VOID@ допустим как указатель, но не как XREF записи")
         if node.xref and node.level:
             errors.append(f"{where}: XREF {node.xref} допускается только у записи уровня 0")
         value = node.value or ""
         pointer = bool(value) and XREF[version].fullmatch(value) is not None
-        if node.tag == "DATE" and not DATE_VALUE[version].fullmatch(value):
-            hint = "; текстовую дату заключите в скобки или используйте ABT, BEF, AFT, BET" if version == "5.5.1" else ""
-            errors.append(f"{where}: дата {value!r} не соответствует GEDCOM {version}{hint}")
+        if node.tag == "DATE":
+            parent = node.parent
+            event_date = (parent is not None and parent.tag in EVENT_TAGS
+                          and parent.parent is not None and parent.parent.tag in {"INDI", "FAM"})
+            if not event_date:
+                warnings.append(f"{where}: DATE в контексте {parent.tag if parent else 'уровня 0'} "
+                                "не проверена; сверьте тип даты по спецификации")
+            elif not DATE_VALUE[version].fullmatch(value):
+                hint = "; текстовую дату заключите в скобки или используйте ABT, BEF, AFT, BET" if version == "5.5.1" else ""
+                errors.append(f"{where}: дата {value!r} не соответствует проверяемому формату GEDCOM {version}{hint}")
         if version == "5.5.1" and not pointer and "@" in re.sub(r"@@|@#[^@]*@", "", value):
             warnings.append(f"{where}: одиночный @ в тексте; в 5.5.1 его удваивают (@@)")
         if version == "7" and value.startswith("@") and not pointer and not value.startswith("@@"):
             errors.append(f"{where}: значение начинается с @; в GEDCOM 7 начальный @ удваивают")
         if version == "7" and node.tag == "CONC":
             errors.append(f"{where}: CONC нет в GEDCOM 7; длинный текст пишут одной строкой")
+        if version == "7" and node.tag == "NOTE" and (node.level == 0 or pointer):
+            errors.append(f"{where}: в GEDCOM 7 общая заметка и ссылка на неё используют SNOTE, не NOTE")
+        if version == "5.5.1" and node.tag == "SNOTE":
+            errors.append(f"{where}: SNOTE относится к GEDCOM 7, не к 5.5.1")
     if version == "5.5.1":
         for number, (line, term) in enumerate(lines, 1):
             if len(line) + term > 255:
@@ -176,6 +205,14 @@ def check_header(records: list[Node], version: str | None, text: str,
         errors.append(f"строка {records[0].line}: первая запись должна быть HEAD")
     if records[-1].tag != "TRLR":
         errors.append(f"строка {records[-1].line}: последняя запись должна быть TRLR")
+    for tag in ("HEAD", "TRLR"):
+        if sum(record.tag == tag for record in records) != 1:
+            errors.append(f"в файле должна быть ровно одна запись {tag}")
+    for record in records:
+        if record.tag in ("HEAD", "TRLR") and (record.xref or record.value is not None):
+            errors.append(f"строка {record.line}: {record.tag} не имеет XREF или значения")
+        if record.tag == "TRLR" and record.children:
+            errors.append(f"строка {record.line}: TRLR не имеет подструктур")
     for record in records[:-1]:
         if record.tag == "TRLR":
             errors.append(f"строка {record.line}: TRLR не в конце файла")
@@ -199,6 +236,11 @@ def check_header(records: list[Node], version: str | None, text: str,
             errors.append(f"HEAD.CHAR {char.value!r}, а файл содержит символы вне ASCII; укажите UTF-8")
 
 
+def unasserted_famc(link: Node) -> bool:
+    status = link.first("STAT")
+    return bool(status and (status.value or "").upper() in {"CHALLENGED", "DISPROVEN"})
+
+
 def check_links(records: list[Node], version: str | None, errors: list[str]) -> None:
     pointer_syntax = XREF.get(version or "", ANY_POINTER)
     defined: dict[str, Node] = {}
@@ -219,6 +261,8 @@ def check_links(records: list[Node], version: str | None, errors: list[str]) -> 
             errors.append(f"строка {node.line}: ссылка {node.tag} {value} не найдена")
             continue
         expected = POINTER_TARGETS.get(node.tag)
+        if version == "7" and node.tag == "NOTE":
+            expected = None  # Diagnosed as a version error by check_syntax.
         if expected and target.tag != expected:
             errors.append(f"строка {node.line}: {node.tag} {value} указывает на {target.tag}, ожидается {expected}")
     for record in records:
@@ -231,27 +275,51 @@ def check_links(records: list[Node], version: str | None, errors: list[str]) -> 
                         errors.append(f"{record.xref} {role} {person}: у {person} нет {back} {record.xref}")
         if record.tag == "INDI" and record.xref:
             for back, roles in (("FAMS", ("HUSB", "WIFE")), ("FAMC", ("CHIL",))):
-                for family in record.values(back):
+                for link in record.children:
+                    if link.tag != back or not link.value or (back == "FAMC" and unasserted_famc(link)):
+                        continue
+                    family = link.value
                     target = defined.get(family)
                     if target is not None and target.tag == "FAM" and not any(
                             record.xref in target.values(role) for role in roles):
                         errors.append(f"{record.xref} {back} {family}: в {family} нет {record.xref} как {'/'.join(roles)}")
 
 
-def read_register(path: Path) -> list[dict[str, str]]:
-    with path.open(encoding="utf-8-sig", newline="") as handle:
-        return list(csv.DictReader(handle))
+def read_register(path: Path, required: set[str], errors: list[str]) -> list[dict[str, str]]:
+    try:
+        rows, file_errors = read_csv(path, required)
+    except (UnicodeError, csv.Error) as exc:
+        errors.append(f"{path.name}: ошибка чтения CSV: {exc}")
+        return []
+    errors.extend(file_errors)
+    return rows
 
 
 def check_registers(records: list[Node], case_dir: Path, errors: list[str], warnings: list[str]) -> None:
-    people = {row["person_id"]: row for row in read_register(case_dir / "person-register.csv")}
-    relations = read_register(case_dir / "relationship-register.csv")
+    register_errors: list[str] = []
+    person_rows = read_register(case_dir / "person-register.csv", {"person_id"}, register_errors)
+    relations = read_register(case_dir / "relationship-register.csv",
+                              {"relationship_id", "person_a_id", "relationship_type", "person_b_id", "status"},
+                              register_errors)
+    for name, rows_, key in (("person-register.csv", person_rows, "person_id"),
+                             ("relationship-register.csv", relations, "relationship_id")):
+        duplicates = duplicate_ids(rows_, key)
+        if duplicates:
+            register_errors.append(f"{name}: дублирующиеся {key}: {', '.join(duplicates)}")
+    errors.extend(register_errors)
+    if register_errors:
+        return
+    people = {row["person_id"]: row for row in person_rows if row.get("person_id")}
+    indi_by_xref = {record.xref: record for record in records if record.tag == "INDI" and record.xref}
     person_of: dict[str, str] = {}
     unmatched = []
     for record in records:
         if record.tag != "INDI" or not record.xref:
             continue
-        ids = [value for value in record.values("REFN") if value in people]
+        ids = sorted({value for value in record.values("REFN") if value in people})
+        if len(ids) > 1:
+            errors.append(f"{record.xref}: несколько REFN соответствуют разным person_id: {', '.join(ids)}")
+            continue
         if not ids:
             unmatched.append(record.xref)
             continue
@@ -269,7 +337,7 @@ def check_registers(records: list[Node], case_dir: Path, errors: list[str], warn
         if parent:
             return [r for r in relations if r["relationship_type"] == "parent-of"
                     and r["person_a_id"] == a and r["person_b_id"] == b]
-        return [r for r in relations if r["relationship_type"] != "parent-of"
+        return [r for r in relations if r["relationship_type"] == "spouse-of"
                 and {r["person_a_id"], r["person_b_id"]} == {a, b}]
 
     exported = set()
@@ -286,6 +354,17 @@ def check_registers(records: list[Node], case_dir: Path, errors: list[str], warn
                               f"{', '.join(sorted({r['status'] for r in found}))}, ниже single-source")
         for child in record.values("CHIL"):
             if child not in person_of:
+                continue
+            child_record = indi_by_xref[child]
+            links = [link for link in child_record.children
+                     if link.tag == "FAMC" and link.value == record.xref]
+            adoption = any(event.tag == "ADOP" and record.xref in event.values("FAMC")
+                           for event in child_record.children)
+            qualified = adoption or any(link.first("PEDI") is not None or unasserted_famc(link) for link in links)
+            if qualified:
+                warnings.append(f"{record.xref} CHIL {child}: PEDI, STAT или усыновление требуют проверки ролей; "
+                                "сверка родительских рёбер этой семьи пропущена, см. gedcom.md")
+                exported.update((parent, person_of[child]) for parent in parents)
                 continue
             for parent in parents:
                 exported.add((parent, person_of[child]))
@@ -317,7 +396,11 @@ def check_registers(records: list[Node], case_dir: Path, errors: list[str], warn
 def check_file(path: Path, case_dir: Path | None = None) -> dict:
     errors: list[str] = []
     warnings: list[str] = []
-    raw = path.read_bytes()
+    try:
+        raw = path.read_bytes()
+    except OSError as exc:
+        return {"file": str(path), "version": None, "counts": {}, "warnings": [],
+                "errors": [f"не удалось прочитать файл: {exc}"]}
     if raw.startswith(b"\xef\xbb\xbf"):
         raw = raw[3:]
     try:
@@ -342,7 +425,7 @@ def check_file(path: Path, case_dir: Path | None = None) -> dict:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Проверяет файл GEDCOM 5.5.1 или 7 и, по желанию, его связи по реестрам дела.")
+        description="Проверяет отдельные правила GEDCOM 5.5.1/7 в UTF-8 и, по желанию, связи по реестрам; не полная валидация.")
     parser.add_argument("path", help="Путь к файлу .ged")
     parser.add_argument("--case-dir", help="Директория дела: сверить людей (REFN = person_id) и связи с реестрами")
     parser.add_argument("--json", action="store_true", help="Вывести JSON")
