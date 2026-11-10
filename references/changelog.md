@@ -1,5 +1,13 @@
 # Release history
 
+## 1.41.0 — 2026-11-11
+
+- Reduce false GEDCOM lint warnings for ordinary birth-family links, recognized spouse labels and exact header/change dates. Keep disputed or ambiguous parent roles and unsupported date contexts explicit ([#201](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/201)).
+- Check infant deaths before treating a namesake as an adult candidate, distinguish name-day recollection from birth evidence, and preserve unresolved Roman-numeral month readings without inventing a precise date ([#202](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/202), [#203](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/203), [#205](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/205)).
+- Read FamilySearch change history against current state before planning a correction, keeping uncertain people separate and changes within existing authorization ([#206](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/206)).
+- Add qualified Ukrainian registration, voter-list and court routes and Russian civil-registration, repression-file and burial routes. Distinguish catalogue or public-copy coverage from actual access, preserve record provenance, and check current rules with the holder ([#204](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/204), [#207](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/207)).
+- Add five qualified catalogue, biography and historical-place leads. Generalize useful observations on composite books, duplicate copies, archive cards, source tabs and military context without carrying case-specific details or alternate access recipes into the catalogue ([#208](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/208)).
+
 ## 1.40.0 — 2026-11-09
 
 - Add an optional local UTF-8 GEDCOM lint helper with bounded version-specific structural checks and selected case-register comparisons. Correct relationship matching and diagnostics, preserve valid version-specific forms, and make unsupported schema, calendar, pedigree, citation and importer checks explicit ([#199](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/199)).
