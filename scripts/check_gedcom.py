@@ -35,10 +35,11 @@ EVENT_TAGS = {
 GREG = "JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC"
 HEB = "TSH|CSH|KSL|TVT|SHV|ADR|ADS|NSN|IYR|SVN|TMZ|AAV|ELL"
 FREN = "VEND|BRUM|FRIM|NIVO|PLUV|VENT|GERM|FLOR|PRAI|MESS|THER|FRUC|COMP"
+DAY_551 = r"(?:0?[1-9]|[12][0-9]|3[01])"
 
 
 def _date_551() -> re.Pattern[str]:
-    day = r"(?:0?[1-9]|[12][0-9]|3[01])"
+    day = DAY_551
     year = r"[0-9]{3,4}"
     dual = year + r"(?:/[0-9]{2})?"
     greg = rf"(?:(?:{day} )?(?:{GREG}) {dual}|{dual}(?: B\.C\.)?)"
@@ -63,6 +64,10 @@ def _date_7() -> re.Pattern[str]:
 
 
 DATE_VALUE = {"5.5.1": _date_551(), "7": _date_7()}
+DATE_EXACT = {
+    "5.5.1": re.compile(rf"{DAY_551} (?:{GREG}) [0-9]+(?:/[0-9]{{2}})?"),
+    "7": re.compile(rf"0*{DAY_551} (?:{GREG}) [0-9]+"),
+}
 LEVEL = {"5.5.1": re.compile(r"0|[1-9][0-9]?"), "7": re.compile(r"0|[1-9][0-9]*")}
 XREF = {"5.5.1": re.compile(r"@[A-Za-z0-9][^@]{0,19}@"), "7": re.compile(r"@[A-Z0-9_]+@")}
 TAG = {"5.5.1": re.compile(r"[A-Za-z0-9_]{1,31}"), "7": re.compile(r"_[A-Z0-9_]+|[A-Z][A-Z0-9_]*")}
@@ -151,6 +156,7 @@ def check_syntax(nodes: list[Node], lines: list[tuple[str, int]], version: str |
                  errors: list[str], warnings: list[str]) -> None:
     if version not in DATE_VALUE:
         return
+    unchecked_dates: list[str] = []
     for node in nodes:
         where = f"строка {node.line}"
         if not LEVEL[version].fullmatch(node.raw_level):
@@ -169,9 +175,13 @@ def check_syntax(nodes: list[Node], lines: list[tuple[str, int]], version: str |
             parent = node.parent
             event_date = (parent is not None and parent.tag in EVENT_TAGS
                           and parent.parent is not None and parent.parent.tag in {"INDI", "FAM"})
-            if not event_date:
-                warnings.append(f"{where}: DATE в контексте {parent.tag if parent else 'уровня 0'} "
-                                "не проверена; сверьте тип даты по спецификации")
+            exact_date = parent is not None and (parent.tag, parent.level) in {("HEAD", 0), ("CHAN", 1)}
+            if exact_date:
+                if not DATE_EXACT[version].fullmatch(value):
+                    errors.append(f"{where}: {parent.tag}.DATE требует точную дату GEDCOM {version} "
+                                  "в форме дня, месяца и года")
+            elif not event_date:
+                unchecked_dates.append(f"{node.line} ({parent.tag if parent else 'уровень 0'})")
             elif not DATE_VALUE[version].fullmatch(value):
                 hint = "; текстовую дату заключите в скобки или используйте ABT, BEF, AFT, BET" if version == "5.5.1" else ""
                 errors.append(f"{where}: дата {value!r} не соответствует проверяемому формату GEDCOM {version}{hint}")
@@ -185,6 +195,10 @@ def check_syntax(nodes: list[Node], lines: list[tuple[str, int]], version: str |
             errors.append(f"{where}: в GEDCOM 7 общая заметка и ссылка на неё используют SNOTE, не NOTE")
         if version == "5.5.1" and node.tag == "SNOTE":
             errors.append(f"{where}: SNOTE относится к GEDCOM 7, не к 5.5.1")
+    if unchecked_dates:
+        locations = ", ".join(unchecked_dates[:20])
+        more = f" и ещё {len(unchecked_dates) - 20}" if len(unchecked_dates) > 20 else ""
+        warnings.append(f"Сверьте по спецификации DATE вне поддерживаемых контекстов. Строки {locations}{more}.")
     if version == "5.5.1":
         for number, (line, term) in enumerate(lines, 1):
             if len(line) + term > 255:
@@ -333,22 +347,23 @@ def check_registers(records: list[Node], case_dir: Path, errors: list[str], warn
         more = f" и ещё {len(unmatched) - 20}" if len(unmatched) > 20 else ""
         warnings.append(f"INDI без REFN с person_id из реестра, не сверены: {', '.join(unmatched[:20])}{more}")
 
-    def rows(a: str, b: str, parent: bool) -> list[dict[str, str]]:
-        if parent:
-            return [r for r in relations if r["relationship_type"] == "parent-of"
-                    and r["person_a_id"] == a and r["person_b_id"] == b]
-        return [r for r in relations if r["relationship_type"] == "spouse-of"
-                and {r["person_a_id"], r["person_b_id"]} == {a, b}]
-
     exported = set()
     for record in records:
         if record.tag != "FAM":
             continue
         parents = [person_of[x] for x in record.values("HUSB") + record.values("WIFE") if x in person_of]
         if len(parents) == 2:
-            found = rows(parents[0], parents[1], parent=False)
+            pair = set(parents)
+            pair_rows = [r for r in relations if {r["person_a_id"], r["person_b_id"]} == pair]
+            found = [r for r in pair_rows if r["relationship_type"] in {"spouse-of", "spouse"}]
             if not found:
-                warnings.append(f"{record.xref}: пара {parents[0]} и {parents[1]} без строки в relationship-register.csv")
+                warning = (f"{record.xref}: для пары {parents[0]} и {parents[1]} нет строки "
+                           "spouse-of или spouse в relationship-register.csv.")
+                if pair_rows:
+                    other_rows = ", ".join(f"{r['relationship_id'] or 'без ID'} ({r['relationship_type'] or 'без типа'})"
+                                           for r in pair_rows)
+                    warning += f" Строки других типов для этих лиц — {other_rows}."
+                warnings.append(warning)
             elif not any(r["status"] in ESTABLISHED for r in found):
                 errors.append(f"{record.xref}: пара {parents[0]} и {parents[1]} в реестре со статусом "
                               f"{', '.join(sorted({r['status'] for r in found}))}, ниже single-source")
@@ -360,15 +375,18 @@ def check_registers(records: list[Node], case_dir: Path, errors: list[str], warn
                      if link.tag == "FAMC" and link.value == record.xref]
             adoption = any(event.tag == "ADOP" and record.xref in event.values("FAMC")
                            for event in child_record.children)
-            qualified = adoption or any(link.first("PEDI") is not None or unasserted_famc(link) for link in links)
+            other_pedigree = any((detail.value or "").casefold() != "birth"
+                                 for link in links for detail in link.children if detail.tag == "PEDI")
+            qualified = adoption or other_pedigree or any(unasserted_famc(link) for link in links)
             if qualified:
-                warnings.append(f"{record.xref} CHIL {child}: PEDI, STAT или усыновление требуют проверки ролей; "
-                                "сверка родительских рёбер этой семьи пропущена, см. gedcom.md")
+                warnings.append(f"{record.xref} CHIL {child}: PEDI, спорный STAT или ADOP требуют проверки ролей. "
+                                "Сверка родительских связей этого ребёнка пропущена. См. gedcom.md.")
                 exported.update((parent, person_of[child]) for parent in parents)
                 continue
             for parent in parents:
                 exported.add((parent, person_of[child]))
-                found = rows(parent, person_of[child], parent=True)
+                found = [r for r in relations if r["relationship_type"] == "parent-of"
+                         and r["person_a_id"] == parent and r["person_b_id"] == person_of[child]]
                 if not found:
                     errors.append(f"{record.xref}: {parent} parent-of {person_of[child]} нет в relationship-register.csv")
                 elif not any(r["status"] in ESTABLISHED for r in found):

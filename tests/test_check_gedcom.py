@@ -133,12 +133,30 @@ class StructureTest(GedcomCase):
         result = self.check(gedcom(body, "0 HEAD\n1 GEDC\n2 VERS 7.0\n"))
         self.assertEqual(result["errors"], [], result)
 
-    def test_non_event_date_context_is_left_for_manual_review(self) -> None:
-        # Source periods and document timestamps have different DATE payload types.
-        body = FAMILY + "0 @S2@ SOUR\n1 DATA\n2 EVEN BIRT\n3 DATE FROM 1800 TO 1900\n"
+    def test_exact_header_and_change_dates(self) -> None:
+        heads = (("5.5.1", HEAD_551.replace("1 SUBM", "1 DATE 1 JAN 2000\n1 SUBM", 1)),
+                 ("7", "0 HEAD\n1 GEDC\n2 VERS 7.0\n1 DATE 1 JAN 2000\n"))
+        body = FAMILY + "0 @I4@ INDI\n1 CHAN\n2 DATE 2 FEB 2000\n"
+        for version, head in heads:
+            with self.subTest(version=version):
+                self.assertClean(self.check(gedcom(body, head)))
+                partial_head = head.replace("1 DATE 1 JAN 2000", "1 DATE JAN 2000")
+                approximate_change = body.replace("2 DATE 2 FEB 2000", "2 DATE ABT 2 FEB 2000")
+                result = self.check(gedcom(approximate_change, partial_head))
+                self.assertTrue(any("HEAD.DATE" in error for error in result["errors"]), result)
+                self.assertTrue(any("CHAN.DATE" in error for error in result["errors"]), result)
+                self.assertEqual(result["warnings"], [], result)
+                dual_year_head = head.replace("1 DATE 1 JAN 2000", "1 DATE 15 FEB 1699/00")
+                result = self.check(gedcom(body, dual_year_head))
+                self.assertEqual(any("HEAD.DATE" in e for e in result["errors"]), version == "7", result)
+
+    def test_other_date_contexts_share_one_manual_review_warning(self) -> None:
+        body = FAMILY + ("0 @S2@ SOUR\n1 DATA\n2 EVEN BIRT\n3 DATE FROM 1800 TO 1900\n"
+                         "2 EVEN DEAT\n3 DATE FROM 1900 TO 2000\n")
         result = self.check(gedcom(body))
         self.assertEqual(result["errors"], [], result)
-        self.assertTrue(any("DATE в контексте EVEN не проверена" in w for w in result["warnings"]), result)
+        self.assertEqual(len(result["warnings"]), 1, result)
+        self.assertEqual(result["warnings"][0].count("(EVEN)"), 2, result)
 
 
 class Version551Test(GedcomCase):
@@ -236,12 +254,18 @@ class RegisterTest(GedcomCase):
         self.assertClean(self.check(gedcom(), case_dir=self.case))
 
     def test_hypothesis_and_missing_links_are_errors(self) -> None:
-        self.relation("R-0001", "P-0001", "spouse-of", "P-0002", "hypothesis")
+        self.relation("R-0001", "P-0001", "spouse", "P-0002", "hypothesis")
         self.relation("R-0002", "P-0001", "parent-of", "P-0003", "hypothesis")
         errors = self.check(gedcom(), case_dir=self.case)["errors"]
         self.assertTrue(any("пара P-0001 и P-0002" in e and "hypothesis" in e for e in errors), errors)
         self.assertTrue(any("P-0001 parent-of P-0003" in e and "hypothesis" in e for e in errors), errors)
         self.assertTrue(any("P-0002 parent-of P-0003 нет" in e for e in errors), errors)
+
+    def test_existing_spouse_spelling_is_compared(self) -> None:
+        self.relation("R-0001", "P-0002", "spouse", "P-0001", "single-source")
+        self.relation("R-0002", "P-0001", "parent-of", "P-0003", "single-source")
+        self.relation("R-0003", "P-0002", "parent-of", "P-0003", "single-source")
+        self.assertClean(self.check(gedcom(), case_dir=self.case))
 
     def test_sibling_row_cannot_establish_a_couple(self) -> None:
         self.relation("R-0001", "P-0001", "sibling-of", "P-0002", "corroborated")
@@ -249,7 +273,8 @@ class RegisterTest(GedcomCase):
         self.relation("R-0003", "P-0002", "parent-of", "P-0003", "single-source")
         result = self.check(gedcom(), case_dir=self.case)
         self.assertEqual(result["errors"], [], result)
-        self.assertTrue(any("пара P-0001 и P-0002 без строки" in w for w in result["warnings"]), result)
+        self.assertTrue(any("нет строки spouse-of или spouse" in w and "R-0001 (sibling-of)" in w
+                            for w in result["warnings"]), result)
 
     def test_ambiguous_refn_and_duplicate_register_ids_are_diagnosed(self) -> None:
         body = FAMILY.replace("1 REFN P-0001", "1 REFN P-0001\n1 REFN P-0002")
@@ -269,19 +294,33 @@ class RegisterTest(GedcomCase):
         result = self.check(gedcom(), case_dir=self.case)
         self.assertTrue(any("больше полей" in e for e in result["errors"]), result)
 
-    def test_pedigree_and_single_parent_adoption_require_role_review(self) -> None:
+    def test_birth_pedigree_compares_parent_links_in_both_versions(self) -> None:
+        self.relation("R-0001", "P-0001", "spouse-of", "P-0002", "single-source")
+        self.relation("R-0002", "P-0001", "parent-of", "P-0003", "single-source")
+        for head, pedigree in ((HEAD_551, "birth"), (Version7Test.HEAD_7, "BIRTH")):
+            with self.subTest(pedigree=pedigree):
+                body = FAMILY.replace("1 FAMC @F1@\n", f"1 FAMC @F1@\n2 PEDI {pedigree}\n")
+                result = self.check(gedcom(body, head), case_dir=self.case)
+                self.assertTrue(any("P-0002 parent-of P-0003 нет" in e for e in result["errors"]), result)
+                self.assertEqual(result["warnings"], [], result)
+
+    def test_qualified_parent_link_requires_review_for_that_child(self) -> None:
         self.relation("R-0001", "P-0001", "spouse-of", "P-0002", "single-source")
         self.add("relationship-register.csv", relationship_id="R-0002", person_a_id="P-0001",
                  relationship_type="parent-of", person_b_id="P-0003", biological_legal_household="legal",
                  status="single-source")
-        # Legal support must not silently certify a BIRTH pedigree or infer the spouse's parenthood.
-        for extra in ("1 FAMC @F1@\n2 PEDI birth\n",
-                      "1 FAMC @F1@\n1 ADOP\n2 FAMC @F1@\n3 ADOP HUSB\n"):
+        self.add("person-register.csv", person_id="P-0004", living_status="deceased")
+        second_child = "0 @I4@ INDI\n1 REFN P-0004\n1 FAMC @F1@\n2 PEDI birth\n"
+        for extra in ("1 FAMC @F1@\n2 PEDI adopted\n",
+                      "1 FAMC @F1@\n2 PEDI birth\n2 STAT challenged\n",
+                      "1 FAMC @F1@\n2 PEDI birth\n1 ADOP\n2 FAMC @F1@\n3 ADOP HUSB\n"):
             with self.subTest(extra=extra):
                 body = FAMILY.replace("1 FAMC @F1@\n", extra)
-                result = self.check(gedcom(body), case_dir=self.case)
-                self.assertEqual(result["errors"], [], result)
-                self.assertTrue(any("сверка родительских рёбер этой семьи пропущена" in w
+                body = body.replace("1 CHIL @I3@\n", "1 CHIL @I3@\n1 CHIL @I4@\n")
+                result = self.check(gedcom(body + second_child), case_dir=self.case)
+                self.assertFalse(any("parent-of P-0003" in e for e in result["errors"]), result)
+                self.assertTrue(any("parent-of P-0004 нет" in e for e in result["errors"]), result)
+                self.assertTrue(any("CHIL @I3@" in w and "этого ребёнка пропущена" in w
                                     for w in result["warnings"]), result)
 
     def test_warnings(self) -> None:
@@ -292,7 +331,7 @@ class RegisterTest(GedcomCase):
         body = (FAMILY.replace("2 SOUR @S1@\n", "") + "0 @I4@ INDI\n1 REFN P-0004\n0 @I5@ INDI\n")
         body = body.replace("1 REFN P-0001\n", "1 REFN P-0001\n1 DEAT Y\n2 NOTE дата не установлена\n")
         warnings = self.check(gedcom(body), case_dir=self.case)["warnings"]
-        expected = ("пара P-0001 и P-0002 без строки", "R-0004", "living_status unknown",
+        expected = ("для пары P-0001 и P-0002 нет строки spouse-of или spouse", "R-0004", "living_status unknown",
                     "@I3@ BIRT с датой или местом без SOUR", "не сверены: @I5@")
         for text in expected:
             self.assertTrue(any(text in w for w in warnings), (text, warnings))

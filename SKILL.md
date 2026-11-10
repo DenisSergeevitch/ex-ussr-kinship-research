@@ -3,7 +3,7 @@ name: ex-ussr-kinship-research
 description: Исследует родственные связи и семейную историю по персональным данным и документам с фокусом на бывший СССР, СССР и Российскую империю. Использовать для генеалогического поиска, сопоставления однофамильцев, архивных, метрических, военных, миграционных и репрессивных записей, построения доказательной цепочки и итогового отчёта. Не использовать для слежки за живыми людьми, поиска их текущих контактов или адресов, доступа к закрытым данным, обхода защиты и утверждения биологического родства без независимого подтверждения. EN — evidence-first genealogy and family-history research for the former USSR, the USSR and the Russian Empire (church/metric books, civil registration, military, migration, deportation and repression records, unindexed archive scans, namesake disambiguation, evidence chains, final report). Reads existing family trees as leads and exports source-cited trees in GEDCOM format when requested. Replies in the user's language. Not for tracking living people.
 compatibility: Предпочтительны внутренний браузер или веб-поиск, чтение PDF/DOCX/изображений и создание файлов. Использует доступные средства веб-поиска, каталоги/API и локальные материалы; отсутствие одного инструмента не останавливает остальные проверки. Работает как skill для Codex и Claude Code.
 metadata:
-  version: "1.40.0"
+  version: "1.41.0"
   language: "ru"
   reply_language: "user"
   region: "ex-USSR"
@@ -154,6 +154,8 @@ python scripts/hash_artifact.py <путь-к-файлу>
 Подробную тактику и приоритеты источников читать в `references/source-strategy.md`. Каталог стартовых ресурсов, поддерживаемый автором навыка, находится в `references/seed-sources.md` и не заменяет проверку актуальности и происхождения. Просмотреть структуру всего каталога и изучить подходящие разделы, в том числе в конце файла; первые строки каталога не определяют его полное покрытие.
 
 Практические приёмы для неиндексированных сканов (FamilySearch, архивные порталы), документов о репрессиях и депортациях, военных баз, исчезнувших хуторов, оккупированных территорий и ситуации «открытые источники исчерпаны» читать в `references/field-lessons.md`.
+
+Для российских справок ЗАГС с дополнительными сведениями, дел о политических репрессиях и реабилитации и доступа к ним, документов о раскулачивании и лишении избирательных прав, а также кладбищенских записей читать `references/russia-records-access.md`.
 
 ## Шаг 6. Искать доступными инструментами
 
