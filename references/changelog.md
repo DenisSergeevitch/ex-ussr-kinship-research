@@ -1,5 +1,12 @@
 # Release history
 
+## 1.43.0 — 2026-11-12
+
+- Check Basharchive frame matches and qualify Genotek's archive and locality filters. Check FamilySearch's image-browse tree and paging alongside its catalogue before drawing coverage conclusions ([#235](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/235), [#236](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/236)).
+- Keep written family questionnaires neutral. Use relevant headings, parallel copies and the wording of household relationships to read confession lists, preserving contradictions and unverified links ([#237](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/237), [#238](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/238)).
+- Separate loss reports, demobilisation destinations and later evidence. Check the effects of military search filters and distinguish unavailable images from missing records. Resolve field-post and unit-name changes with dated documents, and keep party-card chronologies tied to dated records ([#239](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/239), [#240](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/240), [#241](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/241)).
+- Preserve the sources, locators, supported identities and meaningful qualifications of claims retained during biography edits ([#242](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/242)).
+
 ## 1.42.0 — 2026-11-11
 
 - Use godparents and marriage sureties as dated leads, check composite parish volumes before concluding that years are missing, and review relevant changes before handing off a new shareable version ([#210](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/210), [#211](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/211), [#212](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/212)).
