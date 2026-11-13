@@ -16,6 +16,7 @@ from pathlib import Path
 try:
     from .audit_evidence import duplicate_ids, read_csv
 except ImportError:  # Direct CLI invocation, rather than a package import.
+    sys.path.insert(0, str(Path(__file__).resolve().parent))  # `python -I` omits the script folder.
     from audit_evidence import duplicate_ids, read_csv
 
 ESTABLISHED = {"single-source", "corroborated", "strongly-corroborated"}
