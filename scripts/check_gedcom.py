@@ -13,9 +13,9 @@ import re
 import sys
 from pathlib import Path
 
-try:
+if __package__:
     from .audit_evidence import duplicate_ids, read_csv
-except ImportError:  # Direct CLI invocation, rather than a package import.
+else:
     sys.path.insert(0, str(Path(__file__).resolve().parent))  # `python -I` omits the script folder.
     from audit_evidence import duplicate_ids, read_csv
 
@@ -486,8 +486,10 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.path.insert(0, str(Path(__file__).resolve().parent))
-    from research_common import configure_utf8_stdio
+    if __package__:
+        from .research_common import configure_utf8_stdio
+    else:
+        from research_common import configure_utf8_stdio
 
     configure_utf8_stdio()
     raise SystemExit(main())
