@@ -161,6 +161,22 @@ class AuditCase(unittest.TestCase):
         self.assertEqual(result["errors"], [])
         self.assertEqual(result["warnings"], [])
 
+    def test_multiple_source_groups_need_explanation_not_status_upgrade(self):
+        self.two_artifacts()
+        self.append("claims-register.csv",
+                    CLAIM.format(id="C-0001", artifacts="A-0001;A-0002", groups="G1;G2", status="single-source"))
+        # Один документ содержит номер награды, другой дату: вся связка не подтверждена дважды.
+        for rationale, should_warn in [
+            ("Номер награды виден на предмете; приказ подтверждает дату, но не номер.", False),
+            ("", True),
+            ("   ", True),
+        ]:
+            with self.subTest(rationale=rationale):
+                self.update_row("claims-register.csv", "C-0001", rationale=rationale)
+                result = self.audit()
+                self.assertEqual(result["errors"], [])
+                self.assertEqual(any(w.startswith("C-0001:") for w in result["warnings"]), should_warn)
+
     def test_copies_share_group(self):
         self.two_artifacts(second_group="G1")
         self.append("claims-register.csv",
