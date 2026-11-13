@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import subprocess
 import sys
 import tempfile
@@ -74,6 +75,25 @@ class GedcomCase(unittest.TestCase):
 
 
 class StructureTest(GedcomCase):
+    def test_cli_supports_isolated_python(self) -> None:
+        path = self.dir / "tree.ged"
+        path.write_text(gedcom(), encoding="utf-8")
+        for invocation, cwd in (
+            (("-I", str(SCRIPTS / "check_gedcom.py")), self.dir),
+            (("-m", "scripts.check_gedcom"), SCRIPTS.parent),
+        ):
+            for args in (("--help",), (str(path), "--json")):
+                with self.subTest(invocation=invocation, args=args):
+                    result = subprocess.run(
+                        [sys.executable, *invocation, *args], cwd=cwd,
+                        capture_output=True, text=True, encoding="utf-8",
+                    )
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    if "--json" in args:
+                        self.assertClean(json.loads(result.stdout))
+                    else:
+                        self.assertIn("usage:", result.stdout)
+
     def test_valid_551_with_any_line_ending_and_bom(self) -> None:
         text = gedcom()
         self.assertClean(self.check(text))
