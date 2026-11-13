@@ -281,9 +281,10 @@ def main() -> int:
                 f"{claim_id}: статус {status}, но указаны противоречащие артефакты; "
                 "проверьте и объясните, разрешён ли существенный конфликт"
             )
-        if status == "single-source" and len(groups) > 1:
+        # Разные группы могут подтверждать разные части утверждения, а не две полные цепочки.
+        if status == "single-source" and len(groups) > 1 and not row.get("rationale", "").strip():
             warnings.append(
-                f"{claim_id}: несколько независимых групп, но статус всё ещё single-source; проверьте конфликт/полноту"
+                f"{claim_id}: несколько групп источников, но не обоснован статус single-source"
             )
         if status == "strongly-corroborated" and not has_direct_record(referenced, artifact_by_id):
             warnings.append(
