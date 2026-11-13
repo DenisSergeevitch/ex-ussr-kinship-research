@@ -181,6 +181,9 @@ def check_syntax(nodes: list[Node], lines: list[tuple[str, int]], version: str |
                 if not DATE_EXACT[version].fullmatch(value):
                     errors.append(f"{where}: {parent.tag}.DATE требует точную дату GEDCOM {version} "
                                   "в форме дня, месяца и года")
+                elif version == "5.5.1" and not DATE_VALUE[version].fullmatch(value):
+                    warnings.append(f"{where}: {parent.tag}.DATE {value!r}: год вне проверяемого "
+                                    "диапазона дат событий (3–4 цифры); сверьте со спецификацией 5.5.1")
             elif not event_date:
                 unchecked_dates.append(f"{node.line} ({parent.tag if parent else 'уровень 0'})")
             elif not DATE_VALUE[version].fullmatch(value):

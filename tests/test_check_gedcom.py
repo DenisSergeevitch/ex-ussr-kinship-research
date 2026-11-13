@@ -183,6 +183,19 @@ class Version551Test(GedcomCase):
     def date_errors(self, value: str) -> list[str]:
         return self.check(gedcom(FAMILY.replace("2 DATE ABT 1890", f"2 DATE {value}")))["errors"]
 
+    def test_unusual_exact_years_warn_without_rejecting_the_file(self) -> None:
+        for year, warn in (("20", True), ("12345", True), ("20/21", True),
+                           ("12345/46", True), ("850", False), ("2000", False),
+                           ("1699/00", False)):
+            with self.subTest(year=year):
+                head = HEAD_551.replace("1 SUBM", f"1 DATE 1 JAN {year}\n1 SUBM", 1)
+                body = FAMILY + f"0 @I4@ INDI\n1 CHAN\n2 DATE 2 FEB {year}\n"
+                result = self.check(gedcom(body, head))
+                self.assertEqual(result["errors"], [])
+                self.assertEqual(len(result["warnings"]), 2 if warn else 0)
+                for context in ("HEAD.DATE", "CHAN.DATE"):
+                    self.assertEqual(any(context in warning for warning in result["warnings"]), warn)
+
     def test_valid_dates(self) -> None:
         for value in ("1890", "MAR 1890", "12 MAR 1890", "@#DJULIAN@ 12 MAR 1890", "1699/00",
                       "BET 1890 AND 1895", "FROM 1890 TO 1895", "BEF 1900", "CAL 1890",
