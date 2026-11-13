@@ -161,6 +161,22 @@ class AuditCase(unittest.TestCase):
         self.assertEqual(result["errors"], [])
         self.assertEqual(result["warnings"], [])
 
+    def test_multiple_source_groups_need_explanation_not_status_upgrade(self):
+        self.two_artifacts()
+        self.append("claims-register.csv",
+                    CLAIM.format(id="C-0001", artifacts="A-0001;A-0002", groups="G1;G2", status="single-source"))
+        # Один документ содержит номер награды, другой дату: вся связка не подтверждена дважды.
+        for rationale, should_warn in [
+            ("Номер награды виден на предмете; приказ подтверждает дату, но не номер.", False),
+            ("", True),
+            ("   ", True),
+        ]:
+            with self.subTest(rationale=rationale):
+                self.update_row("claims-register.csv", "C-0001", rationale=rationale)
+                result = self.audit()
+                self.assertEqual(result["errors"], [])
+                self.assertEqual(any(w.startswith("C-0001:") for w in result["warnings"]), should_warn)
+
     def test_copies_share_group(self):
         self.two_artifacts(second_group="G1")
         self.append("claims-register.csv",
@@ -317,6 +333,55 @@ class AuditCase(unittest.TestCase):
         summary = self.audit()["summary"]
         self.assertEqual(summary["claims_by_status"], {"hypothesis": 1})
         self.assertEqual(summary["report_markers"], {"неразборчиво": 1, "предположительно": 1})
+
+    def test_multiple_groups_on_one_artifact_report_the_source_of_the_error(self):
+        self.two_artifacts()
+        self.update_row("artifact-register.csv", "A-0001", independence_group="G1; G2, G3")
+        self.append(
+            "claims-register.csv",
+            CLAIM.format(id="C-0001", artifacts="A-0001", groups="g1;G2;G3;G9", status="corroborated"),
+        )
+        self.append(
+            "relationship-register.csv",
+            RELATION.format(id="R-0001", claims="C-0001", artifacts="", groups="G1;G9",
+                            status="corroborated"),
+        )
+        result = self.audit()
+        self.assertEqual(len(result["errors"]), 3)
+        self.assertIn("одну группу", result["errors"][0])
+        self.assertTrue(all("G9" in error for error in result["errors"][1:]))
+        self.assertEqual(sum("групп: 0" in warning for warning in result["warnings"]), 2)
+
+    def test_search_summary_lists_unlinked_artifacts_only_with_readable_search_log(self):
+        self.two_artifacts()
+        self.append("claims-register.csv",
+                    CLAIM.format(id="C-0001", artifacts="A-0001;A-0002", groups="", status="hypothesis"))
+        self.append("search-log.csv", "S-0001,,,,q,,,,found,A-0001,,,")
+        result = self.audit()
+        self.assertEqual(result["summary"]["artifacts_without_search_rows"], ["A-0002"])
+        self.assertFalse(result["errors"] or result["warnings"])
+        self.append("search-log.csv", "S-0002,malformed")
+        self.assertNotIn("artifacts_without_search_rows", self.audit()["summary"])
+        (self.case / "search-log.csv").unlink()
+        self.assertNotIn("artifacts_without_search_rows", self.audit()["summary"])
+
+    def test_warns_for_unrecognised_nonempty_confidence(self):
+        self.append("claims-register.csv",
+                    CLAIM.format(id="C-0001", artifacts="", groups="", status="hypothesis"))
+        self.append(
+            "relationship-register.csv",
+            RELATION.format(id="R-0001", claims="C-0001", artifacts="", groups="", status="hypothesis"),
+        )
+        self.update_row("claims-register.csv", "C-0001", confidence="medium-high")
+        self.update_row("relationship-register.csv", "R-0001", confidence="very low")
+        result = self.audit()
+        self.assertEqual(result["errors"], [])
+        self.assertEqual(len(result["warnings"]), 2)
+        self.assertIn("C-0001: confidence 'medium-high'", result["warnings"][0])
+        self.assertIn("R-0001: confidence 'very low'", result["warnings"][1])
+        self.update_row("claims-register.csv", "C-0001", confidence="")
+        self.update_row("relationship-register.csv", "R-0001", confidence="high")
+        self.assertEqual(self.audit()["warnings"], [])
 
 
 if __name__ == "__main__":

@@ -44,6 +44,7 @@ REQUIRED_FILES = {
 }
 
 CORROBORATED = {"corroborated", "strongly-corroborated"}
+VALID_CONFIDENCE = {"", "low", "moderate", "high"}
 VALID_CLAIM_STATUSES = {
     "",
     "hypothesis",
@@ -98,11 +99,22 @@ def duplicate_ids(rows: Iterable[dict[str, str]], field: str) -> list[str]:
 
 def artifact_groups(artifact_ids: Iterable[str], artifact_by_id: dict[str, dict[str, str]]) -> set[str]:
     return {
-        artifact_by_id[artifact_id]["independence_group"].strip().casefold()
+        group.casefold()
         for artifact_id in artifact_ids
-        if artifact_id in artifact_by_id
-        and artifact_by_id[artifact_id].get("independence_group", "").strip()
+        if (group := artifact_by_id.get(artifact_id, {}).get("independence_group", "").strip())
+        and ";" not in group and "," not in group
     }
+
+
+def unbacked_declared_groups(
+    declared: str, valid: set[str], artifact_ids: Iterable[str],
+    malformed_artifact_groups: dict[str, set[str]],
+) -> list[str]:
+    already_reported = {
+        group for artifact_id in artifact_ids for group in malformed_artifact_groups.get(artifact_id, ())
+    }
+    return sorted(group for group in set(split_ids(declared))
+                  if group.casefold() not in valid and group.casefold() not in already_reported)
 
 
 def has_direct_record(artifact_ids: Iterable[str], artifact_by_id: dict[str, dict[str, str]]) -> bool:
@@ -240,9 +252,17 @@ def main() -> int:
     claim_by_id = {row["claim_id"]: row for row in claims if row.get("claim_id")}
     person_ids = {row["person_id"] for row in persons if row.get("person_id")}
 
+    malformed_artifact_groups: dict[str, set[str]] = {}
     for artifact_id, row in artifact_by_id.items():
-        if not row.get("independence_group", "").strip():
+        group = row.get("independence_group", "")
+        if not group:
             warnings.append(f"{artifact_id}: не указан independence_group")
+        elif ";" in group or "," in group:
+            malformed_artifact_groups[artifact_id] = {part.casefold() for part in split_ids(group)}
+            errors.append(
+                f"{artifact_id}: independence_group должен содержать одну группу; "
+                "разделите сводку разных исходных записей на артефакты"
+            )
         for person_id in split_ids(row.get("person_ids", "")):
             if person_id not in person_ids:
                 errors.append(f"{artifact_id}: неизвестный person_id {person_id}")
@@ -254,6 +274,9 @@ def main() -> int:
         status = row.get("status", "")
         if status not in VALID_CLAIM_STATUSES:
             warnings.append(f"{claim_id}: неизвестный статус {status!r}")
+        confidence = row.get("confidence", "")
+        if confidence not in VALID_CONFIDENCE:
+            warnings.append(f"{claim_id}: confidence {confidence!r} вне шкалы low/moderate/high")
         for person_id in split_ids(row.get("subject_person_ids", "")):
             if person_id not in person_ids:
                 errors.append(f"{claim_id}: неизвестный subject_person_id {person_id}")
@@ -264,11 +287,12 @@ def main() -> int:
                 errors.append(f"{claim_id}: неизвестный artifact_id {artifact_id}")
 
         groups = artifact_groups(referenced, artifact_by_id)
-        for group in sorted(set(split_ids(row.get("supporting_independence_groups", "")))):
-            if group.casefold() not in groups:
-                errors.append(
-                    f"{claim_id}: independence_group {group} заявлен, но ни один из artifact_ids к нему не относится"
-                )
+        for group in unbacked_declared_groups(
+            row.get("supporting_independence_groups", ""), groups, referenced, malformed_artifact_groups
+        ):
+            errors.append(
+                f"{claim_id}: independence_group {group} заявлен, но ни один из artifact_ids к нему не относится"
+            )
 
         if status in CORROBORATED and len(groups) < 2:
             warnings.append(
@@ -281,9 +305,10 @@ def main() -> int:
                 f"{claim_id}: статус {status}, но указаны противоречащие артефакты; "
                 "проверьте и объясните, разрешён ли существенный конфликт"
             )
-        if status == "single-source" and len(groups) > 1:
+        # Разные группы могут подтверждать разные части утверждения, а не две полные цепочки.
+        if status == "single-source" and len(groups) > 1 and not row.get("rationale", "").strip():
             warnings.append(
-                f"{claim_id}: несколько независимых групп, но статус всё ещё single-source; проверьте конфликт/полноту"
+                f"{claim_id}: несколько групп источников, но не обоснован статус single-source"
             )
         if status == "strongly-corroborated" and not has_direct_record(referenced, artifact_by_id):
             warnings.append(
@@ -296,6 +321,9 @@ def main() -> int:
         status = row.get("status", "")
         if status not in VALID_CLAIM_STATUSES:
             warnings.append(f"{relation_id}: неизвестный статус {status!r}")
+        confidence = row.get("confidence", "")
+        if confidence not in VALID_CONFIDENCE:
+            warnings.append(f"{relation_id}: confidence {confidence!r} вне шкалы low/moderate/high")
         for person_field in ("person_a_id", "person_b_id"):
             person_id = row.get(person_field, "")
             if person_id and person_id not in person_ids:
@@ -317,11 +345,12 @@ def main() -> int:
                 backing_ids += split_ids(claim_by_id[claim_id].get("artifact_ids", ""))
                 contradictory.update(split_ids(claim_by_id[claim_id].get("contradicting_artifact_ids", "")))
         groups = artifact_groups(backing_ids, artifact_by_id)
-        for group in sorted(set(split_ids(row.get("independence_groups", "")))):
-            if group.casefold() not in groups:
-                errors.append(
-                    f"{relation_id}: independence_group {group} заявлен, но ни один из артефактов связи к нему не относится"
-                )
+        for group in unbacked_declared_groups(
+            row.get("independence_groups", ""), groups, backing_ids, malformed_artifact_groups
+        ):
+            errors.append(
+                f"{relation_id}: independence_group {group} заявлен, но ни один из артефактов связи к нему не относится"
+            )
         if status in CORROBORATED:
             if len(groups) < 2:
                 warnings.append(
@@ -368,12 +397,16 @@ def main() -> int:
 
     # Журнал поисков необязателен; находка без артефакта — предупреждение.
     search_rows: list[dict[str, str]] = []
+    artifacts_without_search_rows: list[str] | None = None
     search_log = case_dir / "search-log.csv"
     if search_log.is_file():
         search_rows, search_errors = read_csv(search_log, {"search_id", "result_status", "artifact_ids"})
         warnings.extend(search_errors)
+        searched_artifact_ids: set[str] = set()
         for row in search_rows:
-            for artifact_id in split_ids(row.get("artifact_ids", "")):
+            artifact_ids = split_ids(row.get("artifact_ids", ""))
+            searched_artifact_ids.update(artifact_ids)
+            for artifact_id in artifact_ids:
                 if artifact_id not in artifact_by_id:
                     warnings.append(
                         f"{row.get('search_id') or '<без ID>'}: неизвестный artifact_id {artifact_id} в журнале поиска"
@@ -385,6 +418,8 @@ def main() -> int:
                     f"{row.get('search_id') or '<без ID>'}: result_status=found, но artifact_ids пуст — "
                     "находка не зарегистрирована как артефакт"
                 )
+        if not search_errors:
+            artifacts_without_search_rows = sorted(artifact_by_id.keys() - searched_artifact_ids)
 
     # Сводка готовности: что ещё не снято. Не ошибки — для решения, выдавать ли отчёт.
     summary = {
@@ -394,6 +429,8 @@ def main() -> int:
         ),
         "report_markers": markers,
     }
+    if artifacts_without_search_rows is not None:
+        summary["artifacts_without_search_rows"] = artifacts_without_search_rows
 
     result = {
         "case_dir": str(case_dir),
@@ -427,6 +464,9 @@ def main() -> int:
             print(f"- {label}: {line or 'нет'}; без кроссподтверждения: {pending}")
         if markers:
             print("- в отчёте: " + ", ".join(f"[{name}]={count}" for name, count in markers.items()))
+        if artifacts_without_search_rows:
+            print("- артефакты без строки журнала (включая материалы пользователя): "
+                  + ", ".join(artifacts_without_search_rows))
         if errors:
             print("\nОШИБКИ:")
             for item in errors:

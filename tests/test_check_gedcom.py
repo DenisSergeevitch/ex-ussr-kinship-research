@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import subprocess
 import sys
 import tempfile
@@ -74,6 +75,25 @@ class GedcomCase(unittest.TestCase):
 
 
 class StructureTest(GedcomCase):
+    def test_cli_supports_isolated_python(self) -> None:
+        path = self.dir / "tree.ged"
+        path.write_text(gedcom(), encoding="utf-8")
+        for invocation, cwd in (
+            (("-I", str(SCRIPTS / "check_gedcom.py")), self.dir),
+            (("-m", "scripts.check_gedcom"), SCRIPTS.parent),
+        ):
+            for args in (("--help",), (str(path), "--json")):
+                with self.subTest(invocation=invocation, args=args):
+                    result = subprocess.run(
+                        [sys.executable, *invocation, *args], cwd=cwd,
+                        capture_output=True, text=True, encoding="utf-8",
+                    )
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    if "--json" in args:
+                        self.assertClean(json.loads(result.stdout))
+                    else:
+                        self.assertIn("usage:", result.stdout)
+
     def test_valid_551_with_any_line_ending_and_bom(self) -> None:
         text = gedcom()
         self.assertClean(self.check(text))
@@ -162,6 +182,19 @@ class StructureTest(GedcomCase):
 class Version551Test(GedcomCase):
     def date_errors(self, value: str) -> list[str]:
         return self.check(gedcom(FAMILY.replace("2 DATE ABT 1890", f"2 DATE {value}")))["errors"]
+
+    def test_unusual_exact_years_warn_without_rejecting_the_file(self) -> None:
+        for year, warn in (("20", True), ("12345", True), ("20/21", True),
+                           ("12345/46", True), ("850", False), ("2000", False),
+                           ("1699/00", False)):
+            with self.subTest(year=year):
+                head = HEAD_551.replace("1 SUBM", f"1 DATE 1 JAN {year}\n1 SUBM", 1)
+                body = FAMILY + f"0 @I4@ INDI\n1 CHAN\n2 DATE 2 FEB {year}\n"
+                result = self.check(gedcom(body, head))
+                self.assertEqual(result["errors"], [])
+                self.assertEqual(len(result["warnings"]), 2 if warn else 0)
+                for context in ("HEAD.DATE", "CHAN.DATE"):
+                    self.assertEqual(any(context in warning for warning in result["warnings"]), warn)
 
     def test_valid_dates(self) -> None:
         for value in ("1890", "MAR 1890", "12 MAR 1890", "@#DJULIAN@ 12 MAR 1890", "1699/00",

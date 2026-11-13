@@ -140,6 +140,8 @@ tests/                           unit tests (python3 -m unittest discover -s tes
 
 New sources are welcome in `references/seed-sources.md`. Record verified owner, jurisdiction, collection, provenance, IDs, access, restrictions and check date where known; mark gaps instead of guessing. Keep personal data out of examples.
 
+When a readable search log is present, the audit summary lists artifact IDs without a search-log reference. Use the list to check unlinked finds. User-supplied material may appear there without any action needed.
+
 Source-search helpers use Python's standard library and the existing case registers. Run `python3 -m unittest discover -s tests` to check local parsing, GWAR checkpoints, access failures, unresolved coverage and evidence registration against synthetic data. FamilySearch discovery and targeted viewing use the existing lawful browser session; its Python helpers analyze saved fragments. Keep private research files outside this checkout.
 
 ## License

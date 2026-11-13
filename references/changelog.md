@@ -1,5 +1,14 @@
 # Release history
 
+## 1.44.0 — 2026-11-13
+
+- Improve the evidence audit’s reporting for composite artifact group labels, missing search-log links and out-of-scale confidence. Keep supported single-source claims conservative when the reason is recorded ([#244](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/244), [#255](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/255)).
+- Restore isolated-script and module invocation for the GEDCOM checker. Flag unusual years in 5.5.1 exact header and change dates for manual review ([#254](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/254), [#257](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/257)).
+- Check doubtful letters against competing forms, examine relevant parish-register parts and copies, use annual death summaries to prioritize reading, and qualify dated family mentions and only-candidate claims ([#249](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/249), [#250](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/250), [#251](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/251), [#252](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/252), [#253](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/253)).
+- Describe archive viewer and search limits, distinguish FamilySearch catalogue and index coverage, and keep signed-in DNA work within the provider’s permitted methods ([#247](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/247), [#256](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/256), [#258](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/258), [#259](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/259)).
+- Qualify negative archival replies, add Krasnoyarsk reference routes, and verify surname stories and executor handoffs in the existing workflow ([#248](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/248), [#260](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/260), [#261](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/261)).
+- Add historical guidance on local newspaper notices for court divorces and on interpreting marriage wording, dates and titles in transitional parish registers ([#245](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/245), [#246](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/246)).
+
 ## 1.43.0 — 2026-11-12
 
 - Check Basharchive frame matches and qualify Genotek's archive and locality filters. Check FamilySearch's image-browse tree and paging alongside its catalogue before drawing coverage conclusions ([#235](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/235), [#236](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/236)).

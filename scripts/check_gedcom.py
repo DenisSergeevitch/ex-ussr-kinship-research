@@ -13,9 +13,10 @@ import re
 import sys
 from pathlib import Path
 
-try:
+if __package__:
     from .audit_evidence import duplicate_ids, read_csv
-except ImportError:  # Direct CLI invocation, rather than a package import.
+else:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))  # `python -I` omits the script folder.
     from audit_evidence import duplicate_ids, read_csv
 
 ESTABLISHED = {"single-source", "corroborated", "strongly-corroborated"}
@@ -180,6 +181,9 @@ def check_syntax(nodes: list[Node], lines: list[tuple[str, int]], version: str |
                 if not DATE_EXACT[version].fullmatch(value):
                     errors.append(f"{where}: {parent.tag}.DATE требует точную дату GEDCOM {version} "
                                   "в форме дня, месяца и года")
+                elif version == "5.5.1" and not DATE_VALUE[version].fullmatch(value):
+                    warnings.append(f"{where}: {parent.tag}.DATE {value!r}: год вне проверяемого "
+                                    "диапазона дат событий (3–4 цифры); сверьте со спецификацией 5.5.1")
             elif not event_date:
                 unchecked_dates.append(f"{node.line} ({parent.tag if parent else 'уровень 0'})")
             elif not DATE_VALUE[version].fullmatch(value):
@@ -482,8 +486,10 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.path.insert(0, str(Path(__file__).resolve().parent))
-    from research_common import configure_utf8_stdio
+    if __package__:
+        from .research_common import configure_utf8_stdio
+    else:
+        from research_common import configure_utf8_stdio
 
     configure_utf8_stdio()
     raise SystemExit(main())
