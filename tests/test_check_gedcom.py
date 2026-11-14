@@ -230,6 +230,41 @@ class Version551Test(GedcomCase):
         errors = self.check("", gedcom().encode("cp1251"))["errors"]
         self.assertTrue(any("не в UTF-8" in e for e in errors), errors)
 
+    @staticmethod
+    def split_note(tag: str, *cuts: int) -> bytes:
+        """A CRLF file whose note is wrapped by byte count at the given offsets."""
+        note = "Записано со слов соседей, дом № 5".encode("utf-8")
+        before = gedcom(FAMILY, HEAD_551).removesuffix("0 TRLR\n").replace("\n", "\r\n").encode("utf-8")
+        bounds = [0, *cuts, len(note)]
+        pieces = [note[start:end] for start, end in zip(bounds, bounds[1:])]
+        wrapped = (b"\r\n1 " + tag.encode() + b" ").join(pieces)
+        return before + b"0 @N1@ NOTE " + wrapped + b"\r\n0 TRLR\r\n"
+
+    def test_utf8_character_split_across_conc_is_joined(self) -> None:
+        result = self.check("", self.split_note("CONC", 9))  # Inside «с» of «Записано».
+        self.assertEqual(result["errors"], [])
+        self.assertEqual(result["counts"], {"INDI": 3, "FAM": 1, "SOUR": 1})
+        self.assertEqual(len(result["warnings"]), 1, result["warnings"])
+        self.assertIn("CONC делит многобайтовый символ UTF-8", result["warnings"][0])
+        self.assertIn("Строки 32.", result["warnings"][0])
+
+    def test_consecutive_conc_splits_after_a_space(self) -> None:
+        # The first cut follows a space inside «с», the second falls inside the three-byte «№».
+        result = self.check("", self.split_note("CONC", 32, 56))
+        self.assertEqual(result["errors"], [])
+        self.assertEqual(len(result["warnings"]), 1, result["warnings"])
+        self.assertIn("Строки 32, 33.", result["warnings"][0])
+
+    def test_utf8_character_split_across_cont_is_not_utf8(self) -> None:
+        errors = self.check("", self.split_note("CONT", 9))["errors"]
+        self.assertTrue(any("не в UTF-8" in e for e in errors), errors)
+
+    def test_unfinished_character_before_conc_keeps_its_offset(self) -> None:
+        raw = gedcom(FAMILY).removesuffix("0 TRLR\n").encode("utf-8") + b"0 @N1@ NOTE abc\xd0\n1 CONC xyz\n0 TRLR\n"
+        offset = raw.index(b"abc\xd0") + 3
+        errors = self.check("", raw)["errors"]
+        self.assertEqual(errors, [f"файл не в UTF-8 (байт {offset}); проверка читает только UTF-8"])
+
 
 class Version7Test(GedcomCase):
     HEAD_7 = "0 HEAD\n1 GEDC\n2 VERS 7.0\n"
