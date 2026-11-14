@@ -7,6 +7,7 @@ This is not a complete schema, calendar, evidence or importer validator.
 from __future__ import annotations
 
 import argparse
+import codecs
 import csv
 import json
 import re
@@ -74,6 +75,7 @@ XREF = {"5.5.1": re.compile(r"@[A-Za-z0-9][^@]{0,19}@"), "7": re.compile(r"@[A-Z
 TAG = {"5.5.1": re.compile(r"[A-Za-z0-9_]{1,31}"), "7": re.compile(r"_[A-Z0-9_]+|[A-Z][A-Z0-9_]*")}
 LINE = re.compile(r"(?P<level>[0-9]+) (?:(?P<xref>@[^@ ]+@) )?(?P<tag>[^ ]+)(?: (?P<value>.*))?")
 ANY_POINTER = re.compile(r"@[^@# ][^@ ]*@")
+CONC_PREFIX = re.compile(rb"[ \t]*[0-9]+ CONC ")
 
 
 class Node:
@@ -94,6 +96,51 @@ def split_lines(text: str) -> list[tuple[str, int]]:
     """Return (line, terminator length) pairs; GEDCOM allows CR, LF and CRLF."""
     pieces = re.findall(r"[^\r\n]*(?:\r\n|\r|\n)|[^\r\n]+$", text)
     return [(piece.rstrip("\r\n"), len(piece) - len(piece.rstrip("\r\n"))) for piece in pieces]
+
+
+def cut_utf8_tail(data: bytes) -> int:
+    """Return the length of an incomplete UTF-8 sequence at the end of data, or 0."""
+    decoder = codecs.getincrementaldecoder("utf-8")()
+    try:
+        decoder.decode(data)
+    except UnicodeDecodeError:
+        return 0
+    return len(decoder.getstate()[0])
+
+
+def completes_utf8(tail: bytes, value: bytes) -> bool:
+    """Whether the first bytes of value complete the cut UTF-8 sequence in tail."""
+    for size in range(1, 4):
+        try:
+            (tail + value[:size]).decode("utf-8")
+        except UnicodeDecodeError:
+            continue
+        return True
+    return False
+
+
+def join_conc_split_characters(raw: bytes) -> tuple[bytes, list[int]]:
+    """Move UTF-8 characters cut at a CONC boundary onto the CONC line.
+
+    Some exporters wrap long values by byte count, so a multibyte character starts at the
+    end of one line and ends in the next CONC value. CONC appends its value without a
+    separator, so the joined value holds the whole character. CONT starts a new line of
+    text, so a character cut there stays invalid. Bytes move only when they complete a
+    character, so any byte left invalid keeps its offset in the file. Returns the bytes,
+    whose total length is unchanged, and the numbers of the CONC lines that received a
+    joined character.
+    """
+    lines = re.findall(rb"[^\r\n]*(?:\r\n|\r|\n)|[^\r\n]+$", raw)
+    joined: list[int] = []
+    for index in range(len(lines) - 1):
+        body = lines[index].rstrip(b"\r\n")
+        cut = cut_utf8_tail(body)
+        conc = CONC_PREFIX.match(lines[index + 1])
+        if cut and conc and completes_utf8(body[-cut:], lines[index + 1][conc.end():]):
+            lines[index] = body[:-cut] + lines[index][len(body):]
+            lines[index + 1] = conc.group() + body[-cut:] + lines[index + 1][conc.end():]
+            joined.append(index + 2)
+    return b"".join(lines), joined
 
 
 def detect_version(records: list[Node]) -> str | None:
@@ -154,7 +201,7 @@ def walk(nodes: list[Node]):
 
 
 def check_syntax(nodes: list[Node], lines: list[tuple[str, int]], version: str | None,
-                 errors: list[str], warnings: list[str]) -> None:
+                 errors: list[str], warnings: list[str], joined: set[int]) -> None:
     if version not in DATE_VALUE:
         return
     unchecked_dates: list[str] = []
@@ -209,8 +256,8 @@ def check_syntax(nodes: list[Node], lines: list[tuple[str, int]], version: str |
                 errors.append(f"строка {number}: {len(line) + term} символов, в 5.5.1 не больше 255")
         values = {node.line: node.value or "" for node in nodes}
         for node in nodes:
-            if node.tag == "CONC" and (values.get(node.line, "").startswith(" ")
-                                        or values.get(node.line - 1, "").endswith(" ")):
+            if node.tag == "CONC" and node.line not in joined and (
+                    values.get(node.line, "").startswith(" ") or values.get(node.line - 1, "").endswith(" ")):
                 warnings.append(f"строка {node.line}: CONC разрывает текст на пробеле; часть программ его теряет")
 
 
@@ -425,11 +472,22 @@ def check_file(path: Path, case_dir: Path | None = None) -> dict:
                 "errors": [f"не удалось прочитать файл: {exc}"]}
     if raw.startswith(b"\xef\xbb\xbf"):
         raw = raw[3:]
+    joined: list[int] = []
     try:
         text = raw.decode("utf-8")
-    except UnicodeDecodeError as exc:
-        return {"file": str(path), "version": None, "counts": {}, "warnings": [],
-                "errors": [f"файл не в UTF-8 (байт {exc.start}); проверка читает только UTF-8"]}
+    except UnicodeDecodeError:
+        raw, joined = join_conc_split_characters(raw)
+        try:
+            text = raw.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            return {"file": str(path), "version": None, "counts": {}, "warnings": [],
+                    "errors": [f"файл не в UTF-8 (байт {exc.start}); проверка читает только UTF-8"]}
+    if joined:
+        locations = ", ".join(map(str, joined[:20]))
+        more = f" и ещё {len(joined) - 20}" if len(joined) > 20 else ""
+        warnings.append("CONC делит многобайтовый символ UTF-8 между строками; проверка склеила его, "
+                        "но программы, читающие строки по отдельности, его потеряют или не откроют файл. "
+                        f"Строки {locations}{more}.")
     if text and not text.endswith(("\n", "\r")):
         errors.append("после последней строки (0 TRLR) нет перевода строки")
     lines = split_lines(text)
@@ -437,7 +495,7 @@ def check_file(path: Path, case_dir: Path | None = None) -> dict:
     version = detect_version(records)
     nodes = list(walk(records))
     check_header(records, version, text, errors, warnings)
-    check_syntax(nodes, lines, version, errors, warnings)
+    check_syntax(nodes, lines, version, errors, warnings, set(joined))
     check_links(records, version, errors)
     if case_dir is not None:
         check_registers(records, case_dir, errors, warnings)
