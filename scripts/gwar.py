@@ -167,13 +167,16 @@ def place_parts(source):
     return parts
 
 
+def name_key(name):
+    return re.sub(r"[^a-zа-яіїєґăâîșțş]", "", name.lower().replace("ё", "е"))
+
+
 def place_key(name):
-    name = SETTLEMENT_TYPE.sub("", name.lower().replace("ё", "е").strip())
-    return re.sub(r"[^a-zа-яіїєґăâîșțş]", "", name)
+    return name_key(SETTLEMENT_TYPE.sub("", name.lower().strip()))
 
 
-def similarity(left, right):
-    left, right = place_key(left), place_key(right)
+def similarity(left, right, key=place_key):
+    left, right = key(left), key(right)
     if not left or not right:
         return 0.0
     skeleton = [re.sub(r"[аеиоуыэюяіїєйăâîьъ]", "", value) for value in (left, right)]
@@ -183,8 +186,8 @@ def similarity(left, right):
     return round(max(scores), 2)
 
 
-def places(states, target=None):
-    """Group settlement spellings of saved cards by gubernia, uezd and volost; no network access."""
+def saved_cards(states):
+    """Merge cards of saved search/volost files by full key; refuse conflicting snapshots."""
     cards, inputs = {}, []
     for name, state in states:
         if (not isinstance(state, dict) or state.get("source", "gwar") != "gwar"
@@ -205,6 +208,12 @@ def places(states, target=None):
             cards[key] = hit
     if not inputs:
         raise SourceError("Укажите хотя бы одну сохранённую выдачу GWAR.")
+    return cards, inputs
+
+
+def places(states, target=None):
+    """Group settlement spellings of saved cards by gubernia, uezd and volost; no network access."""
+    cards, inputs = saved_cards(states)
     groups = {}
     for hit in cards.values():
         parts = place_parts(hit.get("_source") or {})
@@ -227,6 +236,35 @@ def places(states, target=None):
             "cards": len(cards), "groups": result,
             "coverage": {"complete": all(item["complete"] for item in inputs),
                          "scope": "spellings-in-saved-cards-not-settlement-list"}}
+
+
+def surnames(states, target=None):
+    """Group surname spellings of saved cards and rank them against a target; no network access."""
+    cards, inputs = saved_cards(states)
+    spellings = {}
+    for hit in cards.values():
+        source = hit["_source"]
+        written = str(source.get("last_name") or "").strip()
+        entry = spellings.setdefault(written, {"as_written": written, "cards": 0, "card_ids": [], "card_keys": [],
+                                               "given_names": set(), "places": set()})
+        entry["cards"] += 1
+        entry["card_ids"].append(hit["_id"])
+        entry["card_keys"].append(hit_key(hit))
+        given = " ".join(str(source.get(field) or "").strip() for field in ("first_name", "middle_name")).strip()
+        if given:
+            entry["given_names"].add(given)
+        if str(source.get("birth_place") or "").strip():
+            entry["places"].add(str(source["birth_place"]).strip())
+    items = list(spellings.values())
+    for item in items:
+        item["given_names"], item["places"] = sorted(item["given_names"]), sorted(item["places"])
+        if target:
+            item["similarity"] = similarity(target, item["as_written"], key=name_key)
+    items.sort(key=lambda item: (-item.get("similarity", 0), -item["cards"], item["as_written"]))
+    return {"source": "gwar-surnames", "captured_at": timestamp(), "target": target, "inputs": inputs,
+            "cards": len(cards), "surnames": items,
+            "coverage": {"complete": all(item["complete"] for item in inputs),
+                         "scope": "surname-spellings-in-saved-cards-not-kinship"}}
 
 
 def positive(value):
@@ -255,6 +293,10 @@ def parser():
     spellings.add_argument("--input", nargs="+", required=True, help="JSON-выдачи search/volost")
     spellings.add_argument("--target", help="Неопознанное название, с которым сравнить написания")
     spellings.add_argument("--out", help="JSON вне папки навыка; без него вывод в консоль")
+    names = commands.add_parser("surnames", help="Сравнить написания фамилий в сохранённых выдачах (без сети)")
+    names.add_argument("--input", nargs="+", required=True, help="JSON-выдачи search/volost")
+    names.add_argument("--target", help="Фамилия, с которой сравнить написания")
+    names.add_argument("--out", help="JSON вне папки навыка; без него вывод в консоль")
     page = commands.add_parser("page", help="Найти скан и координаты строк по pages_id")
     page.add_argument("--pages", nargs="+", type=positive, required=True)
     page.add_argument("--out", required=True)
@@ -264,10 +306,11 @@ def parser():
 def main(argv=None):
     args = parser().parse_args(argv)
     try:
-        if args.command == "places":
+        if args.command in ("places", "surnames"):
             if args.out and Path(args.out).expanduser().resolve() in {Path(name).expanduser().resolve() for name in args.input}:
                 raise SourceError("Выходной файл не должен заменять исходную выдачу GWAR.")
-            result = places([(name, read_json(name)) for name in args.input], args.target)
+            compare = places if args.command == "places" else surnames
+            result = compare([(name, read_json(name)) for name in args.input], args.target)
             output_json(result, outside_skill(args.out) if args.out else None)
             return 0 if result["coverage"]["complete"] else 1
         path = outside_skill(args.out)
