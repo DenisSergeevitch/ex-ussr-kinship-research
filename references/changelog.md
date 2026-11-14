@@ -1,5 +1,12 @@
 # Release history
 
+## 1.45.0 — 2026-11-14
+
+- Recover UTF-8 characters split at eligible GEDCOM 5.5.1 continuation boundaries during local validation, with a warning and without changing the source file ([#263](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/263)).
+- Add an offline GWAR surname comparison for saved results with provenance and coverage retained ([#266](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/266)).
+- Add qualified Lithuanian archive, volunteer index and surname-dictionary routes, and distinguish catalogue coverage from actual document access ([#267](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/267)).
+- Check task-owned browser tabs before finishing or stopping, and report what was actually read, what is new, and why a significant repeat is needed when resuming a search ([#264](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/264), [#265](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/265)).
+
 ## 1.44.0 — 2026-11-13
 
 - Improve the evidence audit’s reporting for composite artifact group labels, missing search-log links and out-of-scale confidence. Keep supported single-source claims conservative when the reason is recorded ([#244](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/244), [#255](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/255)).
