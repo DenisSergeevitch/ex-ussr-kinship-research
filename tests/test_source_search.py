@@ -177,15 +177,66 @@ class GwarTests(unittest.TestCase):
         with self.assertRaises(common.SourceError):
             gwar.places([])
 
-    def test_places_never_overwrite_an_input_or_contact_the_site(self):
+    def test_offline_comparisons_never_overwrite_an_input_or_contact_the_site(self):
+        for command in ("places", "surnames"):
+            with self.subTest(command=command), tempfile.TemporaryDirectory() as tmp:
+                source = Path(tmp) / "source.json"
+                common.save_json(source, {"source": "gwar", "hits": [hit(1)], "coverage": {"complete": True}})
+                original = source.read_bytes()
+                with patch.object(gwar, "source_client", side_effect=AssertionError("offline command")):
+                    self.assertEqual(gwar.main([command, "--input", str(source), "--out", str(source)]), 1)
+                    self.assertEqual(source.read_bytes(), original)
+                    output = Path(tmp) / "out.json"
+                    self.assertEqual(gwar.main([command, "--input", str(source), "--out", str(output)]), 0)
+                    for alias_name in ("symlink.json", "hardlink.json"):
+                        alias = Path(tmp) / alias_name
+                        if alias_name == "symlink.json":
+                            alias.symlink_to(source)
+                        else:
+                            alias.hardlink_to(source)
+                        self.assertEqual(gwar.main([command, "--input", str(source), "--out", str(alias)]), 1)
+                        self.assertTrue(alias.samefile(source))
+                    self.assertEqual(source.read_bytes(), original)
+
+    def test_surnames_rank_spellings_by_target_and_keep_card_context(self):
+        def card(number, surname, given="", kind="chelovek_donesenie", **fields):
+            return {"_index": "gwar", "_type": kind, "_id": str(number),
+                    "_source": {"last_name": surname, "first_name": given, **fields}}
+        complete = {"coverage": {"complete": True}, "hits": [
+            card(1, "Тестенко", "Иван", middle_name="Первый", birth_place="Условное село"),
+            card(1, "Тестенко", "Пётр", kind="chelovek_gospital", birth_place_volost="Условная волость"),
+            card(2, "Тэстенко", "Пётр"), card(3, "Дестенко"), card(4, "Условный"), card(5, "")]}
+        partial = {"coverage": {"complete": False}, "hits": [{**card(2, "Тэстенко", "Пётр"), "_score": 4}]}
+        result = gwar.surnames([("volost.json", complete), ("person.json", partial)], "Тестенко")
+        order = [item["as_written"] for item in result["surnames"]]
+        self.assertEqual(order, ["Тестенко", "Тэстенко", "Дестенко", "Условный", ""])
+        first = result["surnames"][0]
+        self.assertEqual(first["cards"], 2)
+        contexts = {row["card_key"]: row for row in first["card_context"]}
+        self.assertEqual(contexts, {
+            "gwar|chelovek_donesenie|1": {"card_id": "1", "card_key": "gwar|chelovek_donesenie|1",
+                                         "first_name": "Иван", "middle_name": "Первый", "birth_place": "Условное село"},
+            "gwar|chelovek_gospital|1": {"card_id": "1", "card_key": "gwar|chelovek_gospital|1",
+                                        "first_name": "Пётр", "birth_place_volost": "Условная волость"},
+        })
+        self.assertEqual(result["surnames"][1]["cards"], 1)
+        self.assertEqual(result["surnames"][1]["similarity"], 1.0)
+        self.assertGreater(result["surnames"][2]["similarity"], result["surnames"][3]["similarity"])
+        self.assertFalse(result["coverage"]["complete"])
+        self.assertEqual(result["coverage"]["scope"], "surname-spellings-in-saved-cards-not-kinship")
+        with self.assertRaises(common.SourceError):
+            gwar.surnames([("other.json", {"rows": []})])
+
+    def test_surnames_cli_writes_partial_result_and_returns_one(self):
         with tempfile.TemporaryDirectory() as tmp:
-            source = Path(tmp) / "source.json"
-            common.save_json(source, {"source": "gwar", "hits": [hit(1)], "coverage": {"complete": True}})
-            original = source.read_bytes()
+            source = Path(tmp) / "partial.json"
+            output = Path(tmp) / "out.json"
+            common.save_json(source, {"source": "gwar", "hits": [hit(1)], "coverage": {"complete": False}})
             with patch.object(gwar, "source_client", side_effect=AssertionError("offline command")):
-                self.assertEqual(gwar.main(["places", "--input", str(source), "--out", str(source)]), 1)
-                self.assertEqual(source.read_bytes(), original)
-                self.assertEqual(gwar.main(["places", "--input", str(source), "--out", str(Path(tmp) / "places.json")]), 0)
+                self.assertEqual(gwar.main(["surnames", "--input", str(source), "--out", str(output)]), 1)
+            result = common.read_json(output)
+            self.assertFalse(result["coverage"]["complete"])
+            self.assertEqual(result["cards"], 1)
 
 
 class RegistrationTests(unittest.TestCase):
