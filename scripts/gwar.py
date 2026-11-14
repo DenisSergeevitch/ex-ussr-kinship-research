@@ -8,6 +8,7 @@ import difflib
 import re
 import ssl
 import sys
+import unicodedata
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -168,18 +169,20 @@ def place_parts(source):
 
 
 def name_key(name):
-    return re.sub(r"[^a-zа-яіїєґăâîșțş]", "", name.lower().replace("ё", "е"))
+    return "".join(char for char in unicodedata.normalize("NFC", name).lower().replace("ё", "е")
+                   if char.isalpha())
 
 
 def place_key(name):
-    return name_key(SETTLEMENT_TYPE.sub("", name.lower().strip()))
+    name = SETTLEMENT_TYPE.sub("", name.lower().replace("ё", "е").strip())
+    return re.sub(r"[^a-zа-яіїєґăâîșțş]", "", name)
 
 
-def similarity(left, right, key=place_key):
+def similarity(left, right, key=place_key, vowels="аеиоуыэюяіїєйăâîьъ"):
     left, right = key(left), key(right)
     if not left or not right:
         return 0.0
-    skeleton = [re.sub(r"[аеиоуыэюяіїєйăâîьъ]", "", value) for value in (left, right)]
+    skeleton = ["".join(char for char in value if char not in vowels) for value in (left, right)]
     scores = [difflib.SequenceMatcher(None, left, right).ratio()]
     if all(skeleton):
         scores.append(difflib.SequenceMatcher(None, *skeleton).ratio())
@@ -203,9 +206,9 @@ def saved_cards(states):
                     or not isinstance(hit.get("_source"), dict)):
                 raise SourceError(f"{name}: карточка GWAR без ID или исходных полей.")
             key = hit_key(hit)
-            if key in cards and cards[key] != hit:
+            if key in cards and cards[key]["_source"] != hit["_source"]:
                 raise SourceError(f"{name}: версии одной карточки GWAR различаются; сравните исходные файлы.")
-            cards[key] = hit
+            cards.setdefault(key, hit)
     if not inputs:
         raise SourceError("Укажите хотя бы одну сохранённую выдачу GWAR.")
     return cards, inputs
@@ -242,25 +245,24 @@ def surnames(states, target=None):
     """Group surname spellings of saved cards and rank them against a target; no network access."""
     cards, inputs = saved_cards(states)
     spellings = {}
-    for hit in cards.values():
+    fields = ("first_name", "middle_name", "birth_place", "birth_place_volost",
+              "birth_place_uezd", "birth_place_gubernia")
+    for key, hit in cards.items():
         source = hit["_source"]
-        written = str(source.get("last_name") or "").strip()
-        entry = spellings.setdefault(written, {"as_written": written, "cards": 0, "card_ids": [], "card_keys": [],
-                                               "given_names": set(), "places": set()})
-        entry["cards"] += 1
-        entry["card_ids"].append(hit["_id"])
-        entry["card_keys"].append(hit_key(hit))
-        given = " ".join(str(source.get(field) or "").strip() for field in ("first_name", "middle_name")).strip()
-        if given:
-            entry["given_names"].add(given)
-        if str(source.get("birth_place") or "").strip():
-            entry["places"].add(str(source["birth_place"]).strip())
-    items = list(spellings.values())
-    for item in items:
-        item["given_names"], item["places"] = sorted(item["given_names"]), sorted(item["places"])
-        if target:
-            item["similarity"] = similarity(target, item["as_written"], key=name_key)
-    items.sort(key=lambda item: (-item.get("similarity", 0), -item["cards"], item["as_written"]))
+        written = str(source.get("last_name") or "")
+        card = {"card_id": hit["_id"], "card_key": key}
+        card.update({field: source[field] for field in fields if source.get(field)})
+        spellings.setdefault(written if written.strip() else "", []).append(card)
+    items = [{"as_written": written, "cards": len(rows), "card_context": rows}
+             for written, rows in spellings.items()]
+    target_key = name_key(target) if target else ""
+    if target_key:
+        for item in items:
+            item["similarity"] = similarity(target, item["as_written"], key=name_key,
+                                            vowels="аеиоуыэюяіїєйăâîьъaeiouy")
+    items.sort(key=lambda item: (not item["as_written"], -item.get("similarity", 0),
+                                 bool(target_key) and name_key(item["as_written"]) != target_key,
+                                 -item["cards"], item["as_written"]))
     return {"source": "gwar-surnames", "captured_at": timestamp(), "target": target, "inputs": inputs,
             "cards": len(cards), "surnames": items,
             "coverage": {"complete": all(item["complete"] for item in inputs),
@@ -307,11 +309,15 @@ def main(argv=None):
     args = parser().parse_args(argv)
     try:
         if args.command in ("places", "surnames"):
-            if args.out and Path(args.out).expanduser().resolve() in {Path(name).expanduser().resolve() for name in args.input}:
-                raise SourceError("Выходной файл не должен заменять исходную выдачу GWAR.")
+            path = outside_skill(args.out) if args.out else None
+            if path is not None:
+                for name in args.input:
+                    source = Path(name).expanduser().resolve()
+                    if path == source or (path.exists() and source.exists() and path.samefile(source)):
+                        raise SourceError("Выходной файл не должен заменять исходную выдачу GWAR.")
             compare = places if args.command == "places" else surnames
             result = compare([(name, read_json(name)) for name in args.input], args.target)
-            output_json(result, outside_skill(args.out) if args.out else None)
+            output_json(result, path)
             return 0 if result["coverage"]["complete"] else 1
         path = outside_skill(args.out)
         if args.command == "page":
