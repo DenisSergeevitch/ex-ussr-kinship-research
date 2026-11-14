@@ -120,25 +120,43 @@ def completes_utf8(tail: bytes, value: bytes) -> bool:
 
 
 def join_conc_split_characters(raw: bytes) -> tuple[bytes, list[int]]:
-    """Move UTF-8 characters cut at a CONC boundary onto the CONC line.
+    """Recover complete characters at adjacent continuation boundaries for linting."""
+    # Surrogate escapes let the existing parser establish line relationships
+    # without treating undecodable values as text for the actual checks.
+    records = parse(raw.decode("utf-8", errors="surrogateescape"), [], [])
+    if detect_version(records) != "5.5.1":
+        return raw, []
+    char = records[0].first("CHAR")
+    if char is None or char.value != "UTF-8":
+        return raw, []
 
-    Some exporters wrap long values by byte count, so a multibyte character starts at the
-    end of one line and ends in the next CONC value. CONC appends its value without a
-    separator, so the joined value holds the whole character. CONT starts a new line of
-    text, so a character cut there stays invalid. Bytes move only when they complete a
-    character, so any byte left invalid keeps its offset in the file. Returns the bytes,
-    whose total length is unchanged, and the numbers of the CONC lines that received a
-    joined character.
-    """
+    nodes = {node.line: node for node in walk(records)}
     lines = re.findall(rb"[^\r\n]*(?:\r\n|\r|\n)|[^\r\n]+$", raw)
     joined: list[int] = []
     for index in range(len(lines) - 1):
+        conc = CONC_PREFIX.match(lines[index + 1])
+        if conc is None:
+            continue
+        previous = nodes.get(index + 1)
+        current = nodes.get(index + 2)
+        if previous is None or not previous.value or current is None or current.parent is None:
+            continue
+        if current.level != current.parent.level + 1:
+            continue
+        if previous.tag in {"CONC", "CONT"}:
+            same_value = current.parent is previous.parent and current.level == previous.level
+        else:
+            same_value = current.parent is previous and current.level == previous.level + 1
+        if not same_value:
+            continue
         body = lines[index].rstrip(b"\r\n")
         cut = cut_utf8_tail(body)
-        conc = CONC_PREFIX.match(lines[index + 1])
-        if cut and conc and completes_utf8(body[-cut:], lines[index + 1][conc.end():]):
+        value = lines[index + 1][conc.end():]
+        if cut and completes_utf8(body[-cut:], value):
+            # The pair keeps its original byte length. The undecodable tail
+            # becomes part of the next value, leaving later offsets unchanged.
             lines[index] = body[:-cut] + lines[index][len(body):]
-            lines[index + 1] = conc.group() + body[-cut:] + lines[index + 1][conc.end():]
+            lines[index + 1] = conc.group() + body[-cut:] + value
             joined.append(index + 2)
     return b"".join(lines), joined
 
@@ -470,8 +488,8 @@ def check_file(path: Path, case_dir: Path | None = None) -> dict:
     except OSError as exc:
         return {"file": str(path), "version": None, "counts": {}, "warnings": [],
                 "errors": [f"не удалось прочитать файл: {exc}"]}
-    if raw.startswith(b"\xef\xbb\xbf"):
-        raw = raw[3:]
+    bom_length = 3 if raw.startswith(codecs.BOM_UTF8) else 0
+    raw = raw[bom_length:]
     joined: list[int] = []
     try:
         text = raw.decode("utf-8")
@@ -481,12 +499,12 @@ def check_file(path: Path, case_dir: Path | None = None) -> dict:
             text = raw.decode("utf-8")
         except UnicodeDecodeError as exc:
             return {"file": str(path), "version": None, "counts": {}, "warnings": [],
-                    "errors": [f"файл не в UTF-8 (байт {exc.start}); проверка читает только UTF-8"]}
+                    "errors": [f"файл не в UTF-8 (байт {bom_length + exc.start}); проверка читает только UTF-8"]}
     if joined:
         locations = ", ".join(map(str, joined[:20]))
         more = f" и ещё {len(joined) - 20}" if len(joined) > 20 else ""
-        warnings.append("CONC делит многобайтовый символ UTF-8 между строками; проверка склеила его, "
-                        "но программы, читающие строки по отдельности, его потеряют или не откроют файл. "
+        warnings.append("CONC делит многобайтовый символ UTF-8 между строками. "
+                        "Символ восстановлен в памяти для проверки. В исходном файле осталась ошибка UTF-8. "
                         f"Строки {locations}{more}.")
     if text and not text.endswith(("\n", "\r")):
         errors.append("после последней строки (0 TRLR) нет перевода строки")

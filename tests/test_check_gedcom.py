@@ -241,12 +241,14 @@ class Version551Test(GedcomCase):
         return before + b"0 @N1@ NOTE " + wrapped + b"\r\n0 TRLR\r\n"
 
     def test_utf8_character_split_across_conc_is_joined(self) -> None:
-        result = self.check("", self.split_note("CONC", 9))  # Inside «с» of «Записано».
+        raw = self.split_note("CONC", 9)  # Inside «с» of «Записано».
+        result = self.check("", raw)
         self.assertEqual(result["errors"], [])
         self.assertEqual(result["counts"], {"INDI": 3, "FAM": 1, "SOUR": 1})
         self.assertEqual(len(result["warnings"]), 1, result["warnings"])
         self.assertIn("CONC делит многобайтовый символ UTF-8", result["warnings"][0])
         self.assertIn("Строки 32.", result["warnings"][0])
+        self.assertEqual((self.dir / "tree.ged").read_bytes(), raw)
 
     def test_consecutive_conc_splits_after_a_space(self) -> None:
         # The first cut follows a space inside «с», the second falls inside the three-byte «№».
@@ -264,6 +266,26 @@ class Version551Test(GedcomCase):
         offset = raw.index(b"abc\xd0") + 3
         errors = self.check("", raw)["errors"]
         self.assertEqual(errors, [f"файл не в UTF-8 (байт {offset}); проверка читает только UTF-8"])
+
+    def test_later_invalid_byte_keeps_its_file_offset_with_bom(self) -> None:
+        raw = b"\xef\xbb\xbf" + self.split_note("CONC", 9)
+        raw = raw.replace(b"0 TRLR\r\n", b"0 @N2@ NOTE bad\xff\r\n0 TRLR\r\n")
+        offset = raw.index(b"\xff")
+        result = self.check("", raw)
+        self.assertEqual(result["errors"], [f"файл не в UTF-8 (байт {offset}); проверка читает только UTF-8"])
+
+    def test_split_before_unrelated_or_unsupported_conc_stays_invalid(self) -> None:
+        raw = self.split_note("CONC", 9)
+        invalid_files = {
+            "unrelated sibling": raw.replace(b"0 @N1@ NOTE ", b"1 NOTE "),
+            "GEDCOM 7": raw.replace(b"2 VERS 5.5.1", b"2 VERS 7.0"),
+            "declared non-UTF-8": raw.replace(b"1 CHAR UTF-8", b"1 CHAR ANSEL"),
+        }
+        for case, invalid in invalid_files.items():
+            with self.subTest(case=case):
+                result = self.check("", invalid)
+                self.assertTrue(any("не в UTF-8" in error for error in result["errors"]), result)
+                self.assertEqual(result["warnings"], [], result)
 
 
 class Version7Test(GedcomCase):
