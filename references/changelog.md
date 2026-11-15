@@ -1,5 +1,12 @@
 # Release history
 
+## 1.46.0 — 2026-11-15
+
+- Qualify Soviet POW enquiries by archival remit, add source routes for clergy families and digitised Kharkiv records, and distinguish Yandex participant-index coverage from the underlying record ([#269](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/269), [#273](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/273), [#277](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/277), [#278](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/278)).
+- Compare baptism and birth dates using the event and calendar in each source. Check the scope and age coverage of confession lists, the identity and binding order of parish records, and alternate readings of names and narrow date ranges ([#270](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/270), [#271](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/271), [#272](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/272), [#274](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/274), [#275](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/275), [#281](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/281)).
+- Qualify archive and viewer access observations, record the actual login state before reporting image access, and carry forward user-supplied readings with their provenance ([#276](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/276), [#279](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/279)).
+- Check shareable evidence fields and attachments for indirect identification, including names of informants outside the tree and identifying source titles ([#280](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/280)).
+
 ## 1.45.0 — 2026-11-14
 
 - Recover UTF-8 characters split at eligible GEDCOM 5.5.1 continuation boundaries during local validation, with a warning and without changing the source file ([#263](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/263)).
