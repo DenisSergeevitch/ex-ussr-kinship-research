@@ -1,5 +1,12 @@
 # Release history
 
+## 1.47.0 — 2026-11-17
+
+- Preserve calendar-marked dates in canonical GEDCOM and verify date fields after destination import. A destination copy can use verified Gregorian equivalents while retaining the original reading and source ([#284](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/284)).
+- Document qualified remote-viewing routes and access limits for the state archives of Smolensk and Bryansk ([#286](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/286)).
+- Check the military section of household records and use relevant case forms in catalogue searches when they can improve coverage ([#287](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/287), [#288](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/288)).
+- Compare a known FamilySearch record across equivalent search routes when a Cyrillic query returns an unexpected zero. Keep the service-specific behavior unresolved until it can be reproduced ([#285](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/285)).
+
 ## 1.46.0 — 2026-11-15
 
 - Qualify Soviet POW enquiries by archival remit, add source routes for clergy families and digitised Kharkiv records, and distinguish Yandex participant-index coverage from the underlying record ([#269](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/269), [#273](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/273), [#277](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/277), [#278](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/278)).
