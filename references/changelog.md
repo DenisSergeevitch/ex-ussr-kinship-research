@@ -1,5 +1,10 @@
 # Release history
 
+## 1.48.0 — 2026-11-17
+
+- Verify image quality and frame identity when obtaining a higher-resolution scan from a viewer. Preserve the qualified Szukaj w Archiwach resolution observation without case-specific locators or promises about permanent links ([#290](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/290)).
+- Wait for completed search loading and verify applied filters before recording an empty result. Distinguish FamilySearch Records from Full-Text Search and retain uncertainty about tool-specific behavior ([#285](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/285)).
+
 ## 1.47.0 — 2026-11-17
 
 - Preserve calendar-marked dates in canonical GEDCOM and verify date fields after destination import. A destination copy can use verified Gregorian equivalents while retaining the original reading and source ([#284](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/284)).
