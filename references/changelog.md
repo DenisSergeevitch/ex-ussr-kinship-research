@@ -1,5 +1,11 @@
 # Release history
 
+## 1.49.0 — 2026-11-19
+
+- Check stated reply destinations within authorized case correspondence, and coordinate browser targets and shared focus during parallel research ([#292](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/292), [#293](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/293)).
+- Preserve completed coverage when paid access expires and keep useful remaining checks visible among routes awaiting access, without requiring unknown prices ([#294](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/294)).
+- Qualify provider observations about machine-derived names and places, joined date values and search failures. Trace register annotations to the correct row and compare uncertain digits with the same handwriting ([#296](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/296), [#297](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/297)).
+
 ## 1.48.0 — 2026-11-17
 
 - Verify image quality and frame identity when obtaining a higher-resolution scan from a viewer. Preserve the qualified Szukaj w Archiwach resolution observation without case-specific locators or promises about permanent links ([#290](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/290)).
