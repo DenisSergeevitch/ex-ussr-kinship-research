@@ -1,5 +1,11 @@
 # Release history
 
+## 1.50.0 — 2026-11-20
+
+- Distinguish a surname-only catalogue description from evidence identifying the requester, and revise candidates when linked document roles resolve the ambiguity ([#299](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/299)).
+- Add НІБУ and archival.name source routes, qualify Rahvusarhiiv copy-order guidance, and preserve dated observations about source fields and search behavior with stated access and coverage limits ([#300](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/300), [#301](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/301), [#302](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/302)).
+- Consider relevant conscription records for people described as civilians, and compare birth and later name forms as identity hypotheses ([#303](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/303), [#304](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/304)).
+
 ## 1.49.0 — 2026-11-19
 
 - Check stated reply destinations within authorized case correspondence, and coordinate browser targets and shared focus during parallel research ([#292](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/292), [#293](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/293)).
