@@ -1,5 +1,10 @@
 # Release history
 
+## 1.51.0 — 2026-11-21
+
+- Check damaged Cyrillic in saved HTML before using an empty local search as evidence, recovering original bytes when available. Record GWAR viewer, card and TLS observations for the affected route and client ([#306](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/306)).
+- Add a contributor-maintained archive-directory route, with a verified homepage link and provider-specific checks for actual holdings and online access ([#307](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/307)).
+
 ## 1.50.0 — 2026-11-20
 
 - Distinguish a surname-only catalogue description from evidence identifying the requester, and revise candidates when linked document roles resolve the ambiguity ([#299](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/299)).
