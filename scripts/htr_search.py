@@ -53,7 +53,8 @@ def stem(normalized: str) -> str:
 
 
 def default_edits(pattern: str) -> int:
-    return len(pattern) // 4
+    """Допуск правок: четырёхбуквенная основа — точно, длиннее — примерно 1 на 4 буквы."""
+    return 0 if len(pattern) <= 4 else len(pattern) // 4
 
 
 def substring_distance(pattern: str, text: str) -> int:
@@ -190,7 +191,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--term", action="append", required=True,
                         help="поисковый термин; варианты через «|». Повторяйте для нескольких людей или слов записи")
     parser.add_argument("--min-terms", type=int, default=1, help="сколько разных терминов должно совпасть на странице")
-    parser.add_argument("--max-edits", type=int, help="допуск правок; по умолчанию длина основы // 4")
+    parser.add_argument("--max-edits", type=int, help="допуск правок; по умолчанию 0 для основы до 4 букв, иначе длина // 4")
     parser.add_argument("--json-field", action="append", dest="json_fields",
                         help="поле строки в JSON (можно несколько); по умолчанию text")
     parser.add_argument("--top", type=int, default=50, help="сколько страниц показать")

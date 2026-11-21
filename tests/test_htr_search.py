@@ -10,6 +10,7 @@ import unittest
 from pathlib import Path
 
 from scripts.htr_search import (
+    default_edits,
     main,
     normalize,
     parse_terms,
@@ -54,6 +55,11 @@ class Normalization(unittest.TestCase):
         self.assertEqual(stem(normalize("Сидоровська")), "сидоровск")
         self.assertEqual(stem(normalize("Петрова")), "петров")
         self.assertEqual(stem(normalize("Хая")), "хая")
+
+    def test_default_edits_are_strict_for_short_stems(self):
+        self.assertEqual(default_edits("хана"), 0)
+        self.assertEqual(default_edits("петров"), 1)
+        self.assertEqual(default_edits("сидорчук"), 2)
 
     def test_substring_distance(self):
         self.assertEqual(substring_distance("петров", "иванпетровсидорчук"), 0)
