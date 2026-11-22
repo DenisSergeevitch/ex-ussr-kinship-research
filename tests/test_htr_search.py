@@ -186,6 +186,23 @@ class Search(unittest.TestCase):
         self.assertEqual(len(result["input_errors"]), 1)
         self.assertEqual(result["matches"][0]["source_file"], str(good))
 
+    def test_cli_rejects_unpaired_surrogates_and_keeps_other_pages(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "good.txt").write_text("Петров", encoding="utf-8")
+            for name, data in [("string.json", {"lines": ["Петров" + chr(0xd800)]}),
+                               ("field.json", {"lines": [{"text": "Петров" + chr(0xd800)}]})]:
+                (root / name).write_text(json.dumps(data), encoding="utf-8")
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                status = main([str(root), "--term", "Петров", "--json"])
+            out.getvalue().encode("utf-8")
+            result = json.loads(out.getvalue())
+        self.assertEqual(status, 1)
+        self.assertEqual(result["pages_with_text"], 1)
+        self.assertEqual(len(result["pages_failed"]), 2)
+        self.assertEqual(result["pages_matched"], 1)
+
     def test_cli_deduplicates_files_and_distinguishes_matching_basenames(self):
         with tempfile.TemporaryDirectory() as tmp:
             paths = []

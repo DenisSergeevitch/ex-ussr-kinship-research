@@ -93,8 +93,10 @@ def read_lines(path: Path, json_fields: list[str]) -> list[list[str]]:
         if not isinstance(data, list):
             raise ValueError("JSON-строки должны быть массивом")
         lines = []
+        # Escaped unpaired surrogates in JSON cannot be emitted as UTF-8 text.
         for item in data:
             if isinstance(item, str):
+                item.encode("utf-8")
                 variants = [item] if item.strip() else []
             elif isinstance(item, dict):
                 if not any(key in item for key in json_fields):
@@ -106,6 +108,7 @@ def read_lines(path: Path, json_fields: list[str]) -> list[list[str]]:
                         continue
                     if not isinstance(value, str):
                         raise ValueError(f"поле JSON-строки {key!r} должно быть текстом")
+                    value.encode("utf-8")
                     if value.strip():
                         variants.append(value)
             else:
