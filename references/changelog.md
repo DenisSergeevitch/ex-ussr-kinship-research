@@ -1,5 +1,12 @@
 # Release history
 
+## 1.52.0 — 2026-11-22
+
+- Add optional local screening of recognized PAGE/ALTO/JSON/TXT page text, with fuzzy term matching, retained alternatives, explicit unread inputs and partial-failure reporting. Verify candidate records against their images ([#309](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/309)).
+- Follow useful references and language versions from biographical articles, and choose metrical-book sections and maternal-family locations from the evidence available ([#310](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/310), [#313](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/313)).
+- Expand Baltic/German and interwar Polish biographical routes with explicit provenance, access and coverage limits ([#311](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/311), [#312](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/312)).
+- Add selected regional finding aids, supplementary record types and an Armenian tax-list route. Check actual pagination boundaries and compare like-for-like file digests ([#314](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/314)).
+
 ## 1.51.0 — 2026-11-21
 
 - Check damaged Cyrillic in saved HTML before using an empty local search as evidence, recovering original bytes when available. Record GWAR viewer, card and TLS observations for the affected route and client ([#306](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/306)).
