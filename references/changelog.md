@@ -1,5 +1,11 @@
 # Release history
 
+## 1.53.0 — 2026-11-23
+
+- Add the Kavkazsky kalendar settlement-list route, distinguishing official bibliographic provenance, third-party copies and the sections and access actually checked ([#316](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/316), [#314](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/314)).
+- Consider delayed civil registration beyond the event year, and coordinate given-name and patronymic variants as identity hypotheses. Use general examples and retain the limits of negative searches and identity evidence ([#317](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/317), [#318](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/318)).
+- Coordinate requests sharing an affected source limit, and record journal times from the clock while preserving the separate meaning and uncertainty of source dates ([#319](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/319), [#320](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/320)).
+
 ## 1.52.0 — 2026-11-22
 
 - Add optional local screening of recognized PAGE/ALTO/JSON/TXT page text, with fuzzy term matching, retained alternatives, explicit unread inputs and partial-failure reporting. Verify candidate records against their images ([#309](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/309)).
