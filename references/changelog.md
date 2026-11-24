@@ -1,5 +1,10 @@
 # Release history
 
+## 1.54.0 — 2026-11-24
+
+- Extend the source catalogue with selected archival, community, historical-reference and emigration routes. Distinguish institutional records, derivative indexes, forum testimony and photographic context, with attributed access and coverage limits ([#322](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/322)).
+- Qualify Nizhny Novgorod, Kostroma and Perm portal access and copy-use observations, distinguish military text cards from viewed document images, and resolve kinship words from the narrator's actual context ([#323](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/323)).
+
 ## 1.53.0 — 2026-11-23
 
 - Add the Kavkazsky kalendar settlement-list route, distinguishing official bibliographic provenance, third-party copies and the sections and access actually checked ([#316](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/316), [#314](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/314)).
