@@ -1,5 +1,11 @@
 # Release history
 
+## 1.55.0 — 2026-11-25
+
+- Clarify autonomous targeted research in a provided browser session while preserving actual source/tool restrictions and the existing access, copying and privacy boundaries ([#325](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/325)).
+- Qualify Bashkortostan finding-aid coverage and Yandex index roles; use searchable inventories to locate records without treating their descriptions as the records themselves ([#326](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/326), [#327](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/327)).
+- Add selected official-dataset, Senate-announcement, book, Finnish newspaper, Turkestan and German travel/emigration routes with provenance, access, privacy and coverage limits ([#328](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/328), [#329](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/329), [#330](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/330), [#331](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/331), [#332](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/332)).
+
 ## 1.54.0 — 2026-11-24
 
 - Extend the source catalogue with selected archival, community, historical-reference and emigration routes. Distinguish institutional records, derivative indexes, forum testimony and photographic context, with attributed access and coverage limits ([#322](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/322)).
