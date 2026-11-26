@@ -16,6 +16,7 @@ The skill's instructions are written in Russian, but **the agent talks to you in
 
 - **Case intake and scope.** One research question, known facts, who may be alive, what is off-limits.
 - **Reproducible registers.** Persons, artifacts, claims, relationships and a full search log (CSV), plus a final report template.
+- **Source coverage map.** An optional CSV separates catalog descriptions, access and the parts actually examined, with methods and gaps; existing cases can copy the blank template. [How to use it](references/source-coverage.md).
 - **Historical jurisdiction model.** It resolves every event to the state, province, district, parish or civil registry *as of the event date*, not today's map.
 - **Name-variant matrices.** Pre-reform Russian, Ukrainian, Polish, Romanian, German and Yiddish forms, patronymics, maiden names and transliterations.
 - **Source strategy.** Originals first, then official catalogs, indexes, published document collections, and only then trees and forums as leads.
