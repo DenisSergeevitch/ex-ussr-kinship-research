@@ -21,6 +21,7 @@ The skill's instructions are written in Russian, but **the agent talks to you in
 - **Name-variant matrices.** Pre-reform Russian, Ukrainian, Polish, Romanian, German and Yiddish forms, patronymics, maiden names and transliterations.
 - **Source strategy.** Originals first, then official catalogs, indexes, published document collections, and only then trees and forums as leads.
 - **Evidence protocol.** Claims get explainable statuses, not percentages: `hypothesis`, `single-source`, `corroborated`, `strongly-corroborated`, `contradicted`, `unresolved`. Copies and mirrors of one record share an `independence_group`, so they never count as independent proof.
+- **Independent reading.** For significant or disputed handwriting, a second reader can transcribe the same image without seeing the first reading. The case records both readings, any prompts or context and unresolved differences. A second reading is not a second independent source. [Procedure and case-note template](references/independent-reading.md).
 - **Identity resolution.** Namesakes stay separate `person_id`s until distinguishing evidence appears: house number, parents, godparents, exact birth date or military unit.
 - **Audit script.** It checks referential integrity and flags weak corroboration before you write conclusions. An independence group counts only when a cited artifact belongs to it, so corroboration cannot be declared into existence. It also checks IDs and statuses in the working Markdown report, if present; the agent checks the delivered HTML against the registers. A summary shows what is still uncorroborated or marked illegible.
 - **Institutional requests.** Draft and, when authorized, send focused requests to archives, libraries, universities and museums using available email or official web tools. If needed, offer a supported mail integration or a ready-to-send letter. Record the outcome, avoid duplicate sends and treat replies as evidence. See [correspondence guidance](references/correspondence.md).
@@ -104,6 +105,7 @@ references/
   correspondence.md              recipients, mail integration, authorized sending and replies
   government-portals.md          civil-registration services and request delivery routes
   evidence-protocol.md           artifact assessment, statuses, identity resolution, conflicts
+  independent-reading.md         separate readings of important scans and comparison
   ex-ussr-locale-guide.md        jurisdictions, name variants, calendars, record types by period
   browser-and-captcha.md         browsing, sign-in, one CAPTCHA attempt and hand-off, rate limits
   privacy-and-safety.md          living people, minors, DNA, sensitive findings
