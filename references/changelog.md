@@ -1,5 +1,12 @@
 # Release history
 
+## 1.56.0 — 2026-11-26
+
+- Consolidate coverage ranges and independent-reading snapshots into existing guidance, and generalize checks for research reports, revision columns and viewer captures ([#334](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/334), [#335](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/335), [#337](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/337)).
+- Add optional local table-index matching/grouping with source provenance, bounded parsing and explicit identity limits ([#336](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/336)).
+- Qualify academic-library, regional-periodical and UaRoots research routes, using general examples and actual access/coverage limits ([#338](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/338), [#339](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/339)).
+- Trace Soviet POW-card references to their original lists while keeping identifiers, annotations, event dates, copied information and unresolved conflicts separate ([#340](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/issues/340)).
+
 ## 1.55.0 — 2026-11-25
 
 - Clarify autonomous targeted research in a provided browser session while preserving actual source/tool restrictions and the existing access, copying and privacy boundaries ([#325](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/325)).
