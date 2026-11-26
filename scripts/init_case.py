@@ -16,6 +16,7 @@ ASSET_FILES = {
     "claims-register.csv": "claims-register.csv",
     "relationship-register.csv": "relationship-register.csv",
     "search-log.csv": "search-log.csv",
+    "source-coverage.csv": "source-coverage.csv",
     "final-report.template.md": "final-report.md",
     "research-state.template.md": "research-state.md",
 }
