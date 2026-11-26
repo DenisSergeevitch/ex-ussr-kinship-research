@@ -9,6 +9,7 @@ import tempfile
 import unittest
 from unittest import mock
 import zipfile
+import xml.etree.ElementTree as ET
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import table_index
@@ -119,6 +120,36 @@ class TableIndexTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             table_index.read_payload(self.path.parent)
 
+    def test_sparse_csv_rows_budget_the_padded_width(self):
+        self.write_csv([["имя", "поле", "другое"], ["Анна"], ["Мария"]])
+        with mock.patch.object(table_index, "MAX_CELLS", 6):
+            with self.assertRaisesRegex(ValueError, "ячеек"):
+                table_index.analyze(self.path, None, ["имя"], ["Анна"], [])
+
+    def test_logical_text_budget_counts_repeated_headers_and_values(self):
+        for rows, limit in [
+            ([["long_header_name_here"], ["Ann"], ["Other"]], 60),
+            ([["name"], ["RepeatedLongText"], ["RepeatedLongText"], ["RepeatedLongText"]], 40),
+        ]:
+            with self.subTest(rows=rows):
+                self.write_csv(rows)
+                with mock.patch.object(table_index, "MAX_LOGICAL_TEXT", limit):
+                    with self.assertRaisesRegex(ValueError, "логического текста"):
+                        table_index.analyze(self.path, None, [rows[0][0]], [rows[1][0]], [])
+
+    @unittest.skipIf(openpyxl is None, "optional openpyxl/defusedxml unavailable")
+    def test_xlsx_logical_text_budget_counts_each_decoded_occurrence(self):
+        path = self.path.with_suffix(".xlsx")
+        book = openpyxl.Workbook()
+        book.active.append(["name"])
+        for _ in range(3):
+            book.active.append(["RepeatedLongText"])
+        book.save(path)
+        book.close()
+        with mock.patch.object(table_index, "MAX_LOGICAL_TEXT", 40):
+            with self.assertRaisesRegex(ValueError, "логического текста"):
+                table_index.analyze(path, None, ["name"], ["RepeatedLongText"], [])
+
     @unittest.skipIf(openpyxl is None, "optional openpyxl/defusedxml unavailable")
     def test_xlsx_sheet_selection_rows_and_formula(self):
         path = self.path.with_suffix(".xlsx")
@@ -203,6 +234,52 @@ class TableIndexTests(unittest.TestCase):
         self.assertEqual(proc.returncode, 2)
         self.assertNotIn("Traceback", proc.stderr)
         self.assertFalse(output.exists())
+
+    @unittest.skipIf(openpyxl is None, "optional openpyxl/defusedxml unavailable")
+    def test_sparse_xlsx_rows_budget_the_padded_width(self):
+        path = self.path.with_suffix(".xlsx")
+        book = openpyxl.Workbook()
+        book.active.append(["имя", "поле", "другое"])
+        book.active.append(["Анна"])
+        book.active.append(["Мария"])
+        book.save(path)
+        book.close()
+        with mock.patch.object(table_index, "MAX_CELLS", 6):
+            with self.assertRaisesRegex(ValueError, "ячеек"):
+                table_index.analyze(path, None, ["имя"], ["Анна"], [])
+
+    @unittest.skipIf(openpyxl is None, "optional openpyxl/defusedxml unavailable")
+    def test_unordered_or_duplicate_xlsx_references_cannot_silently_drop_values(self):
+        path = self.path.with_suffix(".xlsx")
+        book = openpyxl.Workbook()
+        book.active.append(["key", "name"])
+        book.active.append(["group", "Fictional"])
+        book.save(path)
+        book.close()
+        payload = path.read_bytes()
+        namespace = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+        for problem in ["cells", "rows", "duplicate", "mismatched_row"]:
+            with self.subTest(problem=problem):
+                buffer = io.BytesIO()
+                with zipfile.ZipFile(io.BytesIO(payload)) as original, zipfile.ZipFile(buffer, "w") as altered:
+                    for item in original.infolist():
+                        content = original.read(item)
+                        if item.filename == "xl/worksheets/sheet1.xml":
+                            root = ET.fromstring(content)
+                            data = root.find(namespace + "sheetData")
+                            if problem == "cells":
+                                data[1][:] = list(reversed(data[1]))
+                            elif problem == "rows":
+                                data[:] = list(reversed(data))
+                            elif problem == "duplicate":
+                                data[1][1].set("r", "A2")
+                            else:
+                                data[1][1].set("r", "B3")
+                            content = ET.tostring(root)
+                        altered.writestr(item, content)
+                path.write_bytes(buffer.getvalue())
+                with self.assertRaisesRegex(ValueError, "порядок|адрес"):
+                    table_index.analyze(path, None, ["name"], ["Fictional"], [])
 
 
 if __name__ == "__main__":
