@@ -26,6 +26,7 @@ MAX_ZIP_MEMBERS = 1024
 MAX_ROWS = 100_000
 MAX_COLUMNS = 256
 MAX_CELLS = 1_000_000
+MAX_LOGICAL_TEXT = 16 * 1024 * 1024
 
 
 def read_payload(path: Path) -> bytes:
@@ -48,6 +49,11 @@ def check_row_size(rows: int, columns: int, cells: int):
         raise ValueError("таблица превышает лимит строк, столбцов или ячеек")
 
 
+def check_text_size(characters: int):
+    if characters > MAX_LOGICAL_TEXT:
+        raise ValueError("таблица превышает лимит логического текста")
+
+
 def check_package(payload: bytes):
     with zipfile.ZipFile(io.BytesIO(payload)) as archive:
         members = archive.infolist()
@@ -57,6 +63,38 @@ def check_package(payload: bytes):
             raise ValueError("XLSX превышает лимит распаковки или содержит повторные части")
         if any(item.flag_bits & 1 for item in members):
             raise ValueError("зашифрованный XLSX не поддерживается")
+
+
+def check_worksheet_order(payload: bytes, part: str):
+    # openpyxl's streaming reader assumes ordered rows/cells and can silently
+    # discard repeated or descending references. Reject those before results.
+    from defusedxml.ElementTree import iterparse
+    from openpyxl.utils.cell import coordinate_from_string, column_index_from_string
+
+    row_number = 0
+    column_number = 0
+    with zipfile.ZipFile(io.BytesIO(payload)) as archive, archive.open(part) as source:
+        for event, element in iterparse(source, events=("start", "end")):
+            tag = element.tag.rsplit("}", 1)[-1]
+            if event == "start" and tag == "row":
+                number = int(element.get("r", row_number + 1))
+                if number <= row_number:
+                    raise ValueError("некорректный порядок строк XLSX")
+                check_row_size(number, 0, 0)
+                row_number, column_number = number, 0
+            elif event == "start" and tag == "c":
+                reference = element.get("r")
+                if reference:
+                    letters, number = coordinate_from_string(reference)
+                    column = column_index_from_string(letters)
+                else:
+                    column, number = column_number + 1, row_number
+                if number != row_number or column <= column_number:
+                    raise ValueError("некорректный порядок или адрес ячеек XLSX")
+                check_row_size(number, column, 0)
+                column_number = column
+            if event == "end":
+                element.clear()
 
 
 def normalize(value: str) -> str:
@@ -76,14 +114,19 @@ def read_table(path: Path, payload: bytes, sheet: str | None):
             result = []
             cells = len(header)
             check_row_size(1, len(header), cells)
+            header_text = sum(len(value) for value in header)
+            text_size = header_text
+            check_text_size(text_size)
             while True:
                 start = reader.line_num + 1
                 try:
                     row = next(reader)
                 except StopIteration:
                     break
-                cells += len(row)
+                cells += max(len(header), len(row))
                 check_row_size(len(result) + 2, len(row), cells)
+                text_size += header_text + sum(len(value) for value in row)
+                check_text_size(text_size)
                 result.append((start, row))
         return header, result, None
     if suffix != ".xlsx":
@@ -92,7 +135,7 @@ def read_table(path: Path, payload: bytes, sheet: str | None):
     try:
         import openpyxl
         from defusedxml.common import DefusedXmlException
-        from openpyxl.utils.exceptions import InvalidFileException
+        from openpyxl.utils.exceptions import InvalidFileException, CellCoordinatesException
     except ImportError as exc:
         raise ValueError("для XLSX нужны openpyxl и defusedxml; CSV доступен без них") from exc
     if not openpyxl.DEFUSEDXML:
@@ -108,6 +151,10 @@ def read_table(path: Path, payload: bytes, sheet: str | None):
             raise ValueError(f"лист {name!r} не найден")
         if not hasattr(book[name], "iter_rows"):
             raise ValueError("выберите лист таблицы, а не диаграммы")
+        part = getattr(book[name], "_worksheet_path", None)
+        if not isinstance(part, str):
+            raise ValueError("неподдерживаемый потоковый лист XLSX")
+        check_worksheet_order(payload, part)
         # Do not trust a producer's dimensions: they can hide cells or invent
         # millions of empty rows. Bound the actual stream, preserving row gaps.
         book[name].reset_dimensions()
@@ -118,17 +165,24 @@ def read_table(path: Path, payload: bytes, sheet: str | None):
         check_row_size(1, len(header_row), len(header_row))
         if any(cell.data_type == "f" for cell in header_row):
             raise ValueError("формула в строке 1: сохраните копию со значениями")
+        header_text = sum(len(str(cell.value)) for cell in header_row if cell.value is not None)
+        text_size = header_text
+        check_text_size(text_size)
         header = [str(cell.value).strip() if cell.value is not None else "" for cell in header_row]
         result = []
         cells = len(header)
         for number, row in enumerate(rows, start=2):
-            cells += len(row)
+            cells += max(len(header), len(row))
             check_row_size(number, len(row), cells)
+            # Count every decoded occurrence, including shared strings, and
+            # the header keys repeated in each eventual row dictionary.
+            text_size += header_text + sum(len(str(cell.value)) for cell in row if cell.value is not None)
+            check_text_size(text_size)
             if any(cell.data_type == "f" for cell in row):
                 raise ValueError(f"формула в строке {number}: сохраните копию со значениями")
             result.append((number, ["" if cell.value is None else str(cell.value) for cell in row]))
         return header, result, name
-    except (ET.ParseError, SyntaxError, DefusedXmlException, InvalidFileException,
+    except (ET.ParseError, SyntaxError, DefusedXmlException, InvalidFileException, CellCoordinatesException,
             KeyError, TypeError, IndexError, OverflowError, NotImplementedError) as exc:
         raise ValueError("некорректный или неподдерживаемый XLSX") from exc
     finally:
