@@ -1,5 +1,11 @@
 # Release history
 
+## 1.57.0 — 2026-11-28
+
+- Add a manually contributed Turkish README and its link in the canonical English language bar, with focused translation corrections ([#342](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/342)).
+- Qualify Mari El revision-index and Rodnaya Vyatka place-card coverage, alongside regional archive, periodical and FamilySearch observations, preserving provenance and actual access limits ([#343](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/343), [#347](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/347), [#348](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/348)).
+- Refine surname-variant searches, current case-item status and partial section/attachment coverage through existing guidance, without exhaustive search or reporting gates ([#344](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/344), [#345](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/345), [#346](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/346)).
+
 ## 1.56.0 — 2026-11-26
 
 - Consolidate coverage ranges and independent-reading snapshots into existing guidance, and generalize checks for research reports, revision columns and viewer captures ([#334](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/334), [#335](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/335), [#337](https://github.com/DenisSergeevitch/ex-ussr-kinship-research/pull/337)).
